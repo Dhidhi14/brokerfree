@@ -7,6 +7,7 @@ import { env } from '@/config/env';
 import { errorHandler } from '@/middleware/error-handler';
 import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
+import { authRoutes } from '@/routes/auth.routes';
 
 export function createApp(): express.Application {
   const app = express();
@@ -34,6 +35,8 @@ export function createApp(): express.Application {
       timestamp: new Date().toISOString(),
     });
   });
+
+  app.use('/api/auth', authRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
