@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://localhost:5000/api/auth/me
+method: GET
+headers:
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTA3NjgyMzk5YjhmMDVhYzAwMzRhMWIiLCJyb2xlIjoidGVuYW50IiwiaWF0IjoxNzc4ODcyOTMzLCJleHAiOjE3Nzg4NzM4MzN9.gRn4qDdMnHGQ6HfDXuytLUKq2uJYNIbMNZSx-_5odbA
+order: 4472375894704319

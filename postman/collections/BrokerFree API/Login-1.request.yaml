@@ -1,0 +1,14 @@
+$kind: http-request
+name: Login
+url: http://localhost:5000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"test1@brokerfree.com\",\r
+
+    \  \"password\": \"Test@1234\"\r
+
+    }"
+order: 4480456561756167

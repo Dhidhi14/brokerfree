@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://localhost:5000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"test1@brokerfree.com\",\r
+
+    \  \"phone\": \"9876543210\",\r
+
+    \  \"password\": \"Test@1234\",\r
+
+    \  \"fullName\": \"Test User One\",\r
+
+    \  \"role\": \"tenant\"\r
+
+    }"
+order: 3262944607779973
