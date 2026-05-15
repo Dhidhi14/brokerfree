@@ -1,0 +1,178 @@
+# BrokerFree - Project Rules for Cursor AI
+
+## What This Project Is
+BrokerFree is a verified rental platform for India that eliminates broker exploitation. 
+Built on MERN stack with these key innovations:
+- Only Aadhaar-verified owners can list (mocked via DigiLocker)
+- Security deposits held in escrow via Razorpay test mode
+- AI verifies video tours using Claude Vision API
+- Bi-directional ratings prevent discrimination
+- Move-in/move-out photo lock for objective dispute resolution
+
+## User Roles
+- tenant: Searches and rents properties
+- owner: Lists and manages properties (must be verified)
+- admin: Manages platform, verifies owners, mediates disputes
+
+## Tech Stack (DO NOT DEVIATE)
+
+### Frontend (/client)
+- React 18 with TypeScript (strict mode)
+- Vite as build tool
+- Tailwind CSS for styling
+- shadcn/ui for component library
+- Zustand for global state (auth, UI)
+- TanStack Query (React Query) for server state
+- React Hook Form + Zod for forms
+- React Router v6 for routing
+- Axios for HTTP
+- Socket.io-client for real-time
+- Leaflet (free) for maps
+- Lucide-react for icons
+
+### Backend (/server)
+- Node.js with TypeScript (strict mode)
+- Express for HTTP server
+- MongoDB with Mongoose ODM
+- Redis with ioredis client
+- BullMQ for background jobs
+- Socket.io for real-time
+- JWT for auth (jsonwebtoken)
+- Bcryptjs for password hashing
+- Zod for validation
+- Winston for logging
+- Multer for file uploads
+- Cloudinary SDK for media storage
+- Razorpay SDK for payments
+- @anthropic-ai/sdk for AI features
+
+## Code Conventions (STRICT - DO NOT VIOLATE)
+
+### TypeScript
+- ALWAYS use TypeScript strict mode
+- NEVER use 'any' type — use 'unknown' if truly unknown, then narrow
+- Define interfaces for all data shapes
+- Use type imports: import type { X } from 'y'
+
+### Naming
+- Files: kebab-case (e.g., user-profile.tsx, auth.service.ts)
+- React components: PascalCase (e.g., UserProfile)
+- Variables/functions: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Types/Interfaces: PascalCase with 'I' prefix optional (prefer no prefix)
+- Booleans: prefix with is/has/can (isLoading, hasError)
+
+### Exports
+- ALWAYS named exports for utilities, services, types
+- Default exports ONLY for React components and main entry points
+
+### API Response Shape (NEVER VIOLATE)
+All API responses MUST follow this exact shape:
+{
+  success: boolean,
+  data?: T,
+  error?: { code: string, message: string, details?: any },
+  meta?: { page: number, limit: number, total: number }
+}
+
+### Error Handling
+- ALL async functions wrapped in try-catch
+- Use custom AppError class (in /server/src/utils/app-error.ts)
+- Throw with: throw new AppError(message, statusCode, errorCode)
+- Global error handler middleware catches and formats responses
+- Frontend: catch errors in TanStack Query, show via toast
+
+### File Organization
+- Controllers: ONLY handle req/res, NO business logic
+- Services: ALL business logic, return data or throw errors
+- Models: ONLY Mongoose schemas, indexes, virtuals
+- Routes: ONLY define endpoints, attach middleware + controller
+- Validators: ONLY Zod schemas for input validation
+
+### Database
+- Every Mongoose schema has: TypeScript interface + exported model
+- Use timestamps: true on all schemas
+- Index fields that will be queried
+- NEVER expose passwordHash, internal fields in responses
+- Use .select('-passwordHash -__v') by default in queries
+
+### Security
+- ALL inputs validated with Zod before reaching controllers
+- Passwords hashed with bcrypt (10 rounds)
+- JWT access tokens: 15min expiry
+- JWT refresh tokens: 7 days, HTTP-only cookies
+- Rate limit auth endpoints
+- Validate file uploads: type + size limits
+- NEVER expose env variables to frontend
+
+### React Patterns
+- Functional components with TypeScript
+- Props always typed via interface
+- Use shadcn/ui components as base, customize via Tailwind
+- TanStack Query for ALL server state (no useState for API data)
+- Zustand for cross-component client state ONLY
+- Mobile-first responsive design
+- Always handle loading + error + empty states
+
+### Styling
+- Tailwind CSS only — NO inline styles
+- NO custom CSS files except index.css for Tailwind imports
+- Use cn() utility for conditional classes
+- Custom theme in tailwind.config.js, not arbitrary values
+- Color palette: customize away from default Tailwind blue
+- Use Inter or Plus Jakarta Sans font
+
+### Comments
+- DO NOT write comments explaining WHAT code does
+- DO write comments explaining WHY (non-obvious decisions)
+- JSDoc for exported functions/types
+- TODO comments must include date + intent
+
+## Behavior Rules
+
+### Before Writing Code
+1. ALWAYS show me a plan first
+2. List files you'll create/modify
+3. Mention any assumptions or trade-offs
+4. Wait for my approval before generating code
+
+### When Writing Code
+1. Reference existing files when generating similar code
+2. Follow conventions in @.cursorrules
+3. Highlight any deviation from conventions with justification
+4. Include all necessary imports
+5. Add proper TypeScript types (no 'any')
+
+### Things to NEVER Do
+- DON'T install new dependencies without asking
+- DON'T modify .cursorrules itself
+- DON'T add features I didn't ask for
+- DON'T write production code with console.log (use logger)
+- DON'T use deprecated APIs (e.g., componentDidMount, callbacks instead of promises)
+- DON'T hardcode values that should be env vars or constants
+- DON'T write tests unless I specifically ask
+- DON'T fix things I didn't ask you to fix
+- DON'T over-engineer simple things
+
+### Things to ALWAYS Do
+- DO ask clarifying questions if requirements are unclear
+- DO suggest better approaches if you see issues
+- DO point out potential bugs in code I share
+- DO use the latest stable API versions
+- DO follow folder structure in docs/PRD.md
+- DO write self-documenting code (clear names > comments)
+
+## Indian Context (Important!)
+- Currency: INR (₹) everywhere
+- Cities: Mumbai, Bangalore, Delhi NCR, Hyderabad, Chennai, Pune, Kolkata, Ahmedabad
+- Phone: +91 prefix, 10-digit numbers
+- Pincodes: 6 digits
+- Aadhaar: 12 digits, but NEVER store full Aadhaar — only last 4
+- Address fields suit Indian format (line1, locality, city, state, pincode)
+
+## When in Doubt
+1. Re-read this file
+2. Check @docs/PRD.md for requirements
+3. Check @docs/schemas.md for data models
+4. Ask me a clarifying question
+5. Suggest the simplest solution that works
