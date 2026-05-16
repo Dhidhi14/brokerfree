@@ -41,8 +41,27 @@
 - TypeScript `ignoreDeprecations` warning in tsconfig.json
 - Located accessToken in long response (was off-screen, needed scroll)
 
-### Next: Day 3 - Frontend Setup
-- React + Vite + TypeScript
-- Tailwind CSS + shadcn/ui
-- API client to backend
-- Auth UI (Register, Login, OTP)
+
+
+
+## On Day 2 only  - [16-05-2026]  Frontend Foundation
+
+### Built (Frontend Foundation)
+- ✅ React + Vite + TypeScript project
+- ✅ Tailwind CSS with indigo-violet theme
+- ✅ shadcn/ui + 12 components (button, input, card, form, etc.)
+- ✅ Path alias @/ working
+- ✅ Axios client with interceptors (token attach + auto-refresh)
+- ✅ Auth API module
+- ✅ Zustand auth store with localStorage persistence
+- ✅ Utility functions + Indian constants
+- ✅ React Router with ProtectedRoute
+- ✅ 8 placeholder pages
+- ✅ Production build passes (npm run build ✓)
+
+### Issues Fixed
+- tsconfig ignoreDeprecations TS6 warning
+- shadcn installed in literal "@" folder → moved to src/components/ui
+- baseUrl deprecation → removed (paths works without it)
+
+### Next: Day 4 - Auth UI (Register, Login, OTP pages)
