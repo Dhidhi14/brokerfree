@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from '@/api/client';
+import { apiGet, apiPatch, apiPost } from '@/api/client';
 import type { ApiResponse } from '@/types/api.types';
 import type { User, UserRole } from '@/types/user.types';
 
@@ -57,4 +57,10 @@ export function refreshToken(): Promise<ApiResponse<{ accessToken: string }>> {
 
 export function getMe(): Promise<ApiResponse<{ user: User }>> {
   return apiGet<{ user: User }>('/auth/me');
+}
+
+export function updateRole(
+  role: 'tenant' | 'owner'
+): Promise<ApiResponse<{ user: User }>> {
+  return apiPatch<{ user: User }>('/auth/role', { role });
 }

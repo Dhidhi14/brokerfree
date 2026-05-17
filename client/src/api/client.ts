@@ -118,6 +118,15 @@ export async function apiPut<T>(
   return unwrapResponse(response);
 }
 
+export async function apiPatch<T>(
+  url: string,
+  body?: unknown,
+  config?: AxiosRequestConfig
+): Promise<ApiResponse<T>> {
+  const response = await apiClient.patch<ApiResponse<T>>(url, body, config);
+  return unwrapResponse(response);
+}
+
 export async function apiDelete<T>(
   url: string,
   config?: AxiosRequestConfig

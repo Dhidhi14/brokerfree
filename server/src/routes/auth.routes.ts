@@ -7,6 +7,7 @@ import {
   loginSchema,
   registerSchema,
   sendOtpSchema,
+  updateRoleSchema,
   verifyOtpSchema,
 } from '@/validators/auth.validator';
 
@@ -19,5 +20,11 @@ router.post('/send-otp', validate(sendOtpSchema), asyncHandler(authController.se
 router.post('/verify-otp', validate(verifyOtpSchema), asyncHandler(authController.verifyOtp));
 router.post('/refresh-token', asyncHandler(authController.refreshToken));
 router.get('/me', authenticate, asyncHandler(authController.getMe));
+router.patch(
+  '/role',
+  authenticate,
+  validate(updateRoleSchema),
+  asyncHandler(authController.updateRole)
+);
 
 export { router as authRoutes };

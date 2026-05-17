@@ -37,3 +37,9 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type SendOtpInput = z.infer<typeof sendOtpSchema>;
 export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;
+
+export const updateRoleSchema = z.object({
+  role: z.enum(['tenant', 'owner']),
+});
+
+export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;

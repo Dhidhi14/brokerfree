@@ -107,3 +107,12 @@ export async function getMe(req: Request, res: Response): Promise<void> {
     data: { user },
   });
 }
+
+export async function updateRole(req: Request, res: Response): Promise<void> {
+  const user = await authService.updateRole(req.user!.id, req.body);
+
+  res.status(200).json({
+    success: true,
+    data: { user },
+  });
+}

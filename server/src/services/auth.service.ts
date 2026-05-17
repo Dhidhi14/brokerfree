@@ -6,6 +6,7 @@ import type {
   LoginInput,
   RegisterInput,
   SendOtpInput,
+  UpdateRoleInput,
   VerifyOtpInput,
 } from '@/validators/auth.validator';
 
@@ -129,6 +130,34 @@ export async function getMe(userId: string): Promise<UserDocument> {
   if (!user) {
     throw new AppError('User not found', 404, 'USER_NOT_FOUND');
   }
+
+  return user;
+}
+
+export async function updateRole(
+  userId: string,
+  data: UpdateRoleInput
+): Promise<UserDocument> {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  if (user.role === 'admin') {
+    throw new AppError('Admin role cannot be changed', 403, 'FORBIDDEN');
+  }
+
+  if (user.role === data.role) {
+    return user;
+  }
+
+  if (!['tenant', 'owner'].includes(user.role)) {
+    throw new AppError('Role cannot be changed', 403, 'FORBIDDEN');
+  }
+
+  user.role = data.role;
+  await user.save();
 
   return user;
 }

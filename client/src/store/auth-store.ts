@@ -11,6 +11,7 @@ interface AuthState {
   isLoading: boolean;
   setUser: (user: User | null) => void;
   setAccessToken: (token: string | null) => void;
+  setSession: (user: User, accessToken: string) => void;
   login: (credentials: LoginPayload) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
@@ -41,6 +42,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAccessToken: (token) => {
     persistToken(token);
     set({ accessToken: token });
+  },
+
+  setSession: (user, accessToken) => {
+    persistToken(accessToken);
+    set({
+      user,
+      accessToken,
+      isAuthenticated: true,
+    });
   },
 
   login: async (credentials) => {
