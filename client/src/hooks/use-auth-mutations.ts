@@ -58,7 +58,7 @@ export function useVerifyOtpMutation() {
 }
 
 export function useUpdateRoleMutation() {
-  const setUser = useAuthStore((s) => s.setUser);
+  const setSession = useAuthStore((s) => s.setSession);
 
   return useMutation({
     mutationFn: async (role: 'tenant' | 'owner') => {
@@ -68,10 +68,10 @@ export function useUpdateRoleMutation() {
         throw new Error(getApiResponseError(response, 'Failed to update role'));
       }
 
-      return response.data.user;
+      return response.data;
     },
-    onSuccess: (user) => {
-      setUser(user);
+    onSuccess: (data) => {
+      setSession(data.user, data.accessToken);
     },
   });
 }

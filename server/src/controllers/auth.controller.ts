@@ -109,10 +109,15 @@ export async function getMe(req: Request, res: Response): Promise<void> {
 }
 
 export async function updateRole(req: Request, res: Response): Promise<void> {
-  const user = await authService.updateRole(req.user!.id, req.body);
+  const result = await authService.updateRole(req.user!.id, req.body);
+
+  setRefreshCookie(res, result.refreshToken);
 
   res.status(200).json({
     success: true,
-    data: { user },
+    data: {
+      user: result.user,
+      accessToken: result.accessToken,
+    },
   });
 }

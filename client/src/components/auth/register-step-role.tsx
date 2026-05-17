@@ -12,9 +12,9 @@ export function RegisterStepRole() {
 
   const handleSelect = (role: 'tenant' | 'owner') => {
     updateRole.mutate(role, {
-      onSuccess: (user) => {
+      onSuccess: (data) => {
         toast.success(`Welcome! You're set up as ${role === 'tenant' ? 'a tenant' : 'an owner'}.`);
-        navigate(getDashboardPath(user.role), { replace: true });
+        navigate(getDashboardPath(data.user.role), { replace: true });
       },
       onError: (error) => {
         toast.error(getApiErrorMessage(error, 'Failed to save your role'));

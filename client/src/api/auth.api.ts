@@ -61,6 +61,6 @@ export function getMe(): Promise<ApiResponse<{ user: User }>> {
 
 export function updateRole(
   role: 'tenant' | 'owner'
-): Promise<ApiResponse<{ user: User }>> {
-  return apiPatch<{ user: User }>('/auth/role', { role });
+): Promise<ApiResponse<AuthSessionData>> {
+  return apiPatch<AuthSessionData>('/auth/role', { role });
 }

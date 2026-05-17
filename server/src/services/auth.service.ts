@@ -137,7 +137,7 @@ export async function getMe(userId: string): Promise<UserDocument> {
 export async function updateRole(
   userId: string,
   data: UpdateRoleInput
-): Promise<UserDocument> {
+): Promise<AuthResult> {
   const user = await User.findById(userId);
 
   if (!user) {
@@ -148,16 +148,15 @@ export async function updateRole(
     throw new AppError('Admin role cannot be changed', 403, 'FORBIDDEN');
   }
 
-  if (user.role === data.role) {
-    return user;
-  }
-
   if (!['tenant', 'owner'].includes(user.role)) {
     throw new AppError('Role cannot be changed', 403, 'FORBIDDEN');
   }
 
-  user.role = data.role;
-  await user.save();
+  if (user.role !== data.role) {
+    user.role = data.role;
+    await user.save();
+  }
 
-  return user;
+  const tokens = issueTokens(user);
+  return { user, ...tokens };
 }

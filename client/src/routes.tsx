@@ -1,13 +1,15 @@
 import { Route, Routes } from 'react-router-dom';
 import { GuestRoute } from '@/components/common/guest-route';
 import { ProtectedRoute } from '@/components/common/protected-route';
-import { AdminDashboardPage } from '@/pages/admin-dashboard';
+import { AdminDashboardPage } from '@/pages/admin/dashboard';
+import { AdminVerificationsPage } from '@/pages/admin/verifications';
 import { HomePage } from '@/pages/home';
 import { LoginPage } from '@/pages/auth/login';
 import { RegisterPage } from '@/pages/auth/register';
 import { VerifyOtpPage } from '@/pages/auth/verify-otp';
 import { NotFoundPage } from '@/pages/not-found';
 import { OwnerDashboardPage } from '@/pages/owner/dashboard';
+import { OwnerKycPage } from '@/pages/owner/kyc';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
 export function AppRoutes() {
@@ -42,10 +44,26 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/owner/kyc"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <OwnerKycPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin"
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/verifications"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminVerificationsPage />
           </ProtectedRoute>
         }
       />

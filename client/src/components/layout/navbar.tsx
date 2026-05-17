@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Menu, User, X } from 'lucide-react';
+import {
+  BadgeCheck,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Shield,
+  User,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -71,6 +79,18 @@ export function Navbar() {
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   Dashboard
                 </DropdownMenuItem>
+                {user.role === 'admin' ? (
+                  <DropdownMenuItem onClick={() => navigate('/admin')}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    Admin
+                  </DropdownMenuItem>
+                ) : null}
+                {user.role === 'owner' ? (
+                  <DropdownMenuItem onClick={() => navigate('/owner/kyc')}>
+                    <BadgeCheck className="mr-2 h-4 w-4" />
+                    Verification
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuItem
                   onClick={() => toast.info('Profile settings coming soon')}
                 >
@@ -127,6 +147,32 @@ export function Navbar() {
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
+                {user.role === 'admin' ? (
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      navigate('/admin');
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    Admin
+                  </Button>
+                ) : null}
+                {user.role === 'owner' ? (
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      navigate('/owner/kyc');
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <BadgeCheck className="mr-2 h-4 w-4" />
+                    Verification
+                  </Button>
+                ) : null}
                 <Button
                   variant="ghost"
                   className="justify-start"
