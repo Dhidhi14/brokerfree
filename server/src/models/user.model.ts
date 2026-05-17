@@ -5,7 +5,29 @@ export type UserRole = 'tenant' | 'owner' | 'admin';
 
 export type OwnerVerificationStatus = 'pending' | 'verified' | 'rejected';
 
+export type KycStatus = 'not_submitted' | 'pending' | 'verified' | 'rejected';
+
+export type KycDocumentType = 'aadhaar' | 'pan';
+
 export type DocumentType = 'aadhaar' | 'pan' | 'property-deed' | 'electricity-bill';
+
+export interface IKycDocument {
+  type: KycDocumentType;
+  url: string;
+  publicId: string;
+  uploadedAt: Date;
+}
+
+export interface IUserKyc {
+  status: KycStatus;
+  documents: IKycDocument[];
+  submittedAt?: Date;
+  reviewedAt?: Date;
+  reviewedBy?: mongoose.Types.ObjectId;
+  rejectionReason?: string;
+  aadhaarLast4?: string;
+  panLast4?: string;
+}
 
 export interface IUserUploadedDocument {
   type: DocumentType;
@@ -47,6 +69,7 @@ export interface IUser {
   digiLockerVerifiedAt?: Date;
   ownerVerificationStatus?: OwnerVerificationStatus;
   uploadedDocuments?: IUserUploadedDocument[];
+  kyc: IUserKyc;
   tenantProfile?: IUserTenantProfile;
   rating: IUserRating;
   createdAt: Date;
@@ -60,6 +83,38 @@ export interface IUserMethods {
 export type UserDocument = HydratedDocument<IUser, IUserMethods> & {
   password?: string;
 };
+
+const kycDocumentSchema = new Schema<IKycDocument>(
+  {
+    type: {
+      type: String,
+      enum: ['aadhaar', 'pan'],
+      required: true,
+    },
+    url: { type: String, required: true },
+    publicId: { type: String, required: true },
+    uploadedAt: { type: Date, required: true, default: Date.now },
+  },
+  { _id: false }
+);
+
+const kycSchema = new Schema<IUserKyc>(
+  {
+    status: {
+      type: String,
+      enum: ['not_submitted', 'pending', 'verified', 'rejected'],
+      default: 'not_submitted',
+    },
+    documents: { type: [kycDocumentSchema], default: [] },
+    submittedAt: { type: Date },
+    reviewedAt: { type: Date },
+    reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    rejectionReason: { type: String },
+    aadhaarLast4: { type: String },
+    panLast4: { type: String },
+  },
+  { _id: false }
+);
 
 const uploadedDocumentSchema = new Schema<IUserUploadedDocument>(
   {
@@ -141,6 +196,10 @@ const userSchema = new Schema<IUser, mongoose.Model<IUser, object, IUserMethods>
       enum: ['pending', 'verified', 'rejected'],
     },
     uploadedDocuments: [uploadedDocumentSchema],
+    kyc: {
+      type: kycSchema,
+      default: () => ({ status: 'not_submitted', documents: [] }),
+    },
     tenantProfile: tenantProfileSchema,
     rating: {
       average: { type: Number, default: 0 },
@@ -162,6 +221,7 @@ const userSchema = new Schema<IUser, mongoose.Model<IUser, object, IUserMethods>
 );
 
 userSchema.index({ role: 1, ownerVerificationStatus: 1 });
+userSchema.index({ role: 1, 'kyc.status': 1 });
 
 userSchema.pre('validate', async function () {
   if (this.isModified('password') && this.password) {

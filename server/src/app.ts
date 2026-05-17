@@ -8,6 +8,7 @@ import { errorHandler } from '@/middleware/error-handler';
 import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
 import { authRoutes } from '@/routes/auth.routes';
+import { kycRoutes } from '@/routes/kyc.routes';
 
 export function createApp(): express.Application {
   const app = express();
@@ -37,6 +38,7 @@ export function createApp(): express.Application {
   });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/kyc', kycRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
