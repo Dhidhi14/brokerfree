@@ -64,4 +64,25 @@
 - shadcn installed in literal "@" folder → moved to src/components/ui
 - baseUrl deprecation → removed (paths works without it)
 
-### Next: Day 4 - Auth UI (Register, Login, OTP pages)
+
+
+
+## Day 3 - [17-05-2026]
+
+### Built (Authentication UI)
+- ✅ Auth layout, OTP input component, navbar
+- ✅ Register 3-step wizard (account → OTP → role)
+- ✅ Login with role-based redirect
+- ✅ Tenant + Owner dashboards
+- ✅ PATCH /api/auth/role endpoint
+
+### Bugs Fixed
+1. Missing client/.env → 404 on registration
+2. GuestRoute skipped OTP step → wizard authenticates mid-flow,
+   guard redirected before Step 2 rendered
+
+### Verified
+- ✅ Registered "Mayan" (owner) — full flow
+- ✅ MongoDB confirms isPhoneVerified: true, role: owner
+
+### Next: Day 5 - Owner KYC
