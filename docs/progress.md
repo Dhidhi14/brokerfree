@@ -85,4 +85,46 @@
 - ✅ Registered "Mayan" (owner) — full flow
 - ✅ MongoDB confirms isPhoneVerified: true, role: owner
 
-### Next: Day 5 - Owner KYC
+
+
+
+## On Day 3 only - [17-05-2026]
+
+### Built (Owner KYC System)
+
+#### Backend
+- ✅ Cloudinary config + upload middleware (multer, 5MB, jpg/png/pdf)
+- ✅ Cloudinary service (uploadDocument, deleteDocument → brokerfree/kyc folder)
+- ✅ Mock KYC verification service (simulates DigiLocker — rejects Aadhaar ending 0000)
+- ✅ KYC service (submit, status, list pending, review + rollback on failure)
+- ✅ KYC routes at /api/kyc (submit, status, pending, review)
+- ✅ Sensitive data masking — only aadhaarLast4 / panLast4 stored, never full numbers
+- ✅ Audit log model — every admin approve/reject recorded with performedBy + targetUser
+
+#### Frontend
+- ✅ KYC API module (submitKyc, getKycStatus, getPendingKyc, reviewKyc)
+- ✅ Document uploader component (drag-and-drop, preview, validation, remove)
+- ✅ KYC status badge (gray/amber/green/red by status)
+- ✅ Owner KYC page — status-driven UI (form / pending / verified / rejected)
+- ✅ Admin verifications page (pending list, document dialog, approve/reject)
+- ✅ Owner dashboard updated with KYC status section + "Complete Verification" CTA
+- ✅ Navbar updated (Admin link for admins, Verification link for owners)
+- ✅ New routes: /owner/kyc, /admin, /admin/verifications
+
+### Bugs Fixed
+1. **MIME-type file rejection** — multer filtered real images because Postman sends
+   application/octet-stream. Fixed by checking file extension OR mimetype (not just mimetype).
+
+2. **Stale JWT after role change** — freshly-registered owners got 403 on KYC submit
+   because the token issued at Step 1 still carried role: "tenant". The PATCH /role
+   endpoint now re-issues a fresh token with the updated role, and the frontend stores it.
+   Lesson: the JWT is the source of truth for role — updating the DB alone is not enough.
+
+### Tested (Full Flow in Browser)
+- ✅ Fresh owner registers → submits KYC immediately (no re-login needed after fix)
+- ✅ Documents upload to Cloudinary (real URLs returned)
+- ✅ Admin logs in → sees pending owner → views documents → approves
+- ✅ Owner sees green "verified" state after approval
+- ✅ MongoDB confirms: isAadhaarVerified: true, ownerVerificationStatus: "verified"
+
+### Next: Day 6 - Property Module (CRUD, photo uploads, geospatial search, listing wizard)
