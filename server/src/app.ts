@@ -11,6 +11,7 @@ import { agreementRoutes } from '@/routes/agreement.routes';
 import { applicationRoutes } from '@/routes/application.routes';
 import { authRoutes } from '@/routes/auth.routes';
 import { chatRoutes } from '@/routes/chat.routes';
+import { escrowRoutes } from '@/routes/escrow.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
 import { propertyRoutes } from '@/routes/property.routes';
 
@@ -24,7 +25,14 @@ export function createApp(): express.Application {
       credentials: true,
     })
   );
-  app.use(express.json());
+  app.use(
+    express.json({
+      verify: (req, _res, buf) => {
+        // Preserve exact bytes for Razorpay webhook HMAC (X-Razorpay-Signature)
+        (req as express.Request).rawBody = buf.toString('utf8');
+      },
+    })
+  );
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(
@@ -47,6 +55,7 @@ export function createApp(): express.Application {
   app.use('/api/applications', applicationRoutes);
   app.use('/api/chat', chatRoutes);
   app.use('/api/agreements', agreementRoutes);
+  app.use('/api/escrow', escrowRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

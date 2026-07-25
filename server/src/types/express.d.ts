@@ -9,6 +9,8 @@ declare global {
       };
       validatedQuery?: unknown;
       validatedParams?: unknown;
+      /** Raw JSON body string for Razorpay webhook HMAC verification */
+      rawBody?: string;
     }
   }
 }

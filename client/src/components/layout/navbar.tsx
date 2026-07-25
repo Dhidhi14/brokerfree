@@ -10,7 +10,9 @@ import {
   Menu,
   MessageSquare,
   Shield,
+  ShieldCheck,
   User,
+  Wallet,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -84,12 +86,20 @@ export function Navbar() {
                 </Link>
               </Button>
               {user.role === 'tenant' || user.role === 'owner' ? (
-                <Button variant="ghost" asChild>
-                  <Link to="/agreements">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Agreements
-                  </Link>
-                </Button>
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/agreements">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Agreements
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/escrow">
+                      <Wallet className="mr-2 h-4 w-4" />
+                      Deposits
+                    </Link>
+                  </Button>
+                </>
               ) : null}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -120,6 +130,10 @@ export function Navbar() {
                     <DropdownMenuItem onClick={() => navigate('/admin/property-verifications')}>
                       <Building2 className="mr-2 h-4 w-4" />
                       Property Verifications
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/admin/escrow')}>
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      Escrow Management
                     </DropdownMenuItem>
                   </>
                 ) : null}
@@ -213,17 +227,30 @@ export function Navbar() {
                   ) : null}
                 </Button>
                 {user.role === 'tenant' || user.role === 'owner' ? (
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => {
-                      navigate('/agreements');
-                      setMobileOpen(false);
-                    }}
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Agreements
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/agreements');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Agreements
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/escrow');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <Wallet className="mr-2 h-4 w-4" />
+                      Deposits
+                    </Button>
+                  </>
                 ) : null}
                 <Button
                   variant="ghost"
@@ -259,6 +286,17 @@ export function Navbar() {
                     >
                       <Building2 className="mr-2 h-4 w-4" />
                       Property Verifications
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/admin/escrow');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      Escrow Management
                     </Button>
                   </>
                 ) : null}

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { GuestRoute } from '@/components/common/guest-route';
 import { ProtectedRoute } from '@/components/common/protected-route';
 import { AdminDashboardPage } from '@/pages/admin/dashboard';
+import { AdminEscrowManagementPage } from '@/pages/admin/escrow-management';
 import { AdminPropertyVerificationsPage } from '@/pages/admin/property-verifications';
 import { AdminVerificationsPage } from '@/pages/admin/verifications';
 import { HomePage } from '@/pages/home';
@@ -21,6 +22,7 @@ import { ConversationsPage } from '@/pages/chat/conversations';
 import { ChatThreadPage } from '@/pages/chat/thread';
 import { AgreementDetailPage } from '@/pages/agreements/detail';
 import { MyAgreementsPage } from '@/pages/agreements/my-agreements';
+import { MyEscrowsPage } from '@/pages/escrow/my-escrows';
 import { TenantApplicationsPage } from '@/pages/tenant/applications';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
@@ -59,6 +61,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['tenant', 'owner']}>
             <AgreementDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/escrow"
+        element={
+          <ProtectedRoute allowedRoles={['tenant', 'owner']}>
+            <MyEscrowsPage />
           </ProtectedRoute>
         }
       />
@@ -158,6 +168,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminPropertyVerificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/escrow"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminEscrowManagementPage />
           </ProtectedRoute>
         }
       />

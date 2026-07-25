@@ -352,3 +352,28 @@
 - ✅ Terms, PDF link, and both signature timestamps render correctly
 
 ### Next: Day 13-14 - Escrow (Razorpay)
+
+## Day 13-14 - [25-07-2026] Escrow (Razorpay)
+
+### Built (Backend)
+- ✅ Razorpay order creation, HMAC-SHA256 signature verification
+  (timing-safe), webhook handler as defensive backup
+- ✅ Escrow state machine: pending → held → released/refunded/disputed
+- ✅ Status history log + audit log entries for admin actions
+- ✅ Real Razorpay refund API integration (test mode)
+
+### Built (Frontend)
+- ✅ Razorpay Checkout integration (script load, order → pay → verify)
+- ✅ Escrow section on agreement detail: pay/protected/dispute/terminal states
+- ✅ Deposits page (tenant/owner), Admin Escrow Management page
+
+### Tested (Real Razorpay Test-Mode Payment, Full Flow)
+- ✅ Real payment completed via Razorpay Checkout (domestic test card)
+- ✅ Signature verified → status "held" → "Deposit Protected" UI
+- ✅ Admin releases to owner → status "released", removed from queue
+- ⚠️ Refund path: code verified correct via direct Razorpay API
+  inspection (payment confirmed "captured", amount/paise conversion
+  exact) — blocked only by Razorpay test-account balance limits for
+  refunds, a known sandbox constraint, not an application bug
+
+### Next: Day 15-16 - Photo Lock (move-in/move-out photo verification)

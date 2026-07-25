@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AgreementStatusBadge } from '@/components/agreement/agreement-status-badge';
+import { AgreementEscrowSection } from '@/components/escrow/agreement-escrow-section';
 import { Navbar } from '@/components/layout/navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -146,6 +147,15 @@ function AgreementDetailContent({
             </div>
           </div>
         </div>
+      ) : null}
+
+      {agreement.status === 'executed' ? (
+        <AgreementEscrowSection
+          agreementId={agreement._id}
+          depositAmount={agreement.terms.deposit}
+          isTenant={isTenantViewer}
+          isOwner={isOwnerViewer}
+        />
       ) : null}
 
       <Card>
