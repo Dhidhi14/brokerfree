@@ -12,7 +12,14 @@ export function validate<T>(schema: ZodType<T>, source: RequestSource = 'body'):
       return;
     }
 
-    req[source] = result.data;
+    if (source === 'body') {
+      req.body = result.data;
+    } else if (source === 'query') {
+      req.validatedQuery = result.data;
+    } else {
+      req.validatedParams = result.data;
+    }
+
     next();
   };
 }

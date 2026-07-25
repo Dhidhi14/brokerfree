@@ -63,6 +63,7 @@ export interface IProperty {
   videoTour?: IPropertyVideoTour;
   preferences: IPropertyPreferences;
   status: PropertyStatus;
+  rejectionReason?: string;
   views: number;
   shortlists: number;
   createdAt: Date;
@@ -182,6 +183,7 @@ const propertySchema = new Schema<IProperty>(
       enum: PROPERTY_STATUSES,
       default: 'draft',
     },
+    rejectionReason: { type: String },
     views: { type: Number, default: 0, min: 0 },
     shortlists: { type: Number, default: 0, min: 0 },
   },

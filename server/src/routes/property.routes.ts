@@ -7,6 +7,7 @@ import { validate } from '@/middleware/validate';
 import { asyncHandler } from '@/utils/async-handler';
 import {
   nearbySchema,
+  reviewPropertySchema,
   searchPropertySchema,
   updatePropertySchema,
 } from '@/validators/property.validator';
@@ -38,6 +39,21 @@ router.get(
   authenticate,
   authorize('owner'),
   asyncHandler(propertyController.getMyProperties)
+);
+
+router.get(
+  '/pending/review',
+  authenticate,
+  authorize('admin'),
+  asyncHandler(propertyController.listPendingProperties)
+);
+
+router.patch(
+  '/:id/review',
+  authenticate,
+  authorize('admin'),
+  validate(reviewPropertySchema),
+  asyncHandler(propertyController.reviewProperty)
 );
 
 router.get(

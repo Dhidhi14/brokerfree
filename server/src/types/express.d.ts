@@ -7,6 +7,8 @@ declare global {
         id: string;
         role: UserRole;
       };
+      validatedQuery?: unknown;
+      validatedParams?: unknown;
     }
   }
 }

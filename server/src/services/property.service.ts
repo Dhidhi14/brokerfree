@@ -1,5 +1,6 @@
 import mongoose, { type SortOrder } from 'mongoose';
 import { PROPERTY_CLOUDINARY_FOLDER } from '@/constants/property.constants';
+import { AuditLog } from '@/models/audit-log.model';
 import { Property, type IProperty, type PropertyDocument } from '@/models/property.model';
 import { User, type UserDocument } from '@/models/user.model';
 import * as cloudinaryService from '@/services/cloudinary.service';
@@ -9,9 +10,11 @@ import type {
   NearbySearchInput,
   SearchPropertyInput,
   UpdatePropertyInput,
+  ReviewPropertyInput,
 } from '@/validators/property.validator';
 
 const OWNER_PUBLIC_FIELDS = 'fullName profilePicture rating';
+const OWNER_ADMIN_REVIEW_FIELDS = 'fullName email phone';
 
 export interface PropertyListResult {
   properties: IProperty[];
@@ -316,4 +319,75 @@ export async function deleteProperty(propertyId: string, ownerId: string): Promi
 
   await Promise.all(publicIds.map((publicId) => cloudinaryService.deleteDocument(publicId)));
   await Property.findByIdAndDelete(propertyId);
+}
+
+export async function listPendingProperties(): Promise<IProperty[]> {
+  const properties = await Property.find({ status: 'pending-verification' })
+    .sort({ createdAt: 1 })
+    .populate({ path: 'owner', select: OWNER_ADMIN_REVIEW_FIELDS })
+    .lean();
+
+  return properties;
+}
+
+export async function reviewProperty(
+  adminId: string,
+  propertyId: string,
+  input: ReviewPropertyInput
+): Promise<IProperty> {
+  if (!mongoose.isValidObjectId(propertyId)) {
+    throw new AppError('Property not found', 404, 'PROPERTY_NOT_FOUND');
+  }
+
+  const property = await Property.findById(propertyId);
+
+  if (!property) {
+    throw new AppError('Property not found', 404, 'PROPERTY_NOT_FOUND');
+  }
+
+  if (property.status !== 'pending-verification') {
+    throw new AppError(
+      'Property is not pending verification',
+      400,
+      'PROPERTY_NOT_PENDING'
+    );
+  }
+
+  const previousStatus = property.status;
+  const ownerId = property.owner.toString();
+
+  if (input.decision === 'approve') {
+    property.status = 'live';
+    property.rejectionReason = undefined;
+
+    await property.save();
+
+    await AuditLog.create({
+      action: 'property.approved',
+      performedBy: adminId,
+      targetUser: ownerId,
+      details: { decision: 'approve', previousStatus, propertyId },
+    });
+  } else {
+    property.status = 'inactive';
+    property.rejectionReason = input.rejectionReason;
+
+    await property.save();
+
+    await AuditLog.create({
+      action: 'property.rejected',
+      performedBy: adminId,
+      targetUser: ownerId,
+      details: {
+        decision: 'reject',
+        previousStatus,
+        propertyId,
+        rejectionReason: input.rejectionReason,
+      },
+    });
+  }
+
+  await property.populate({ path: 'owner', select: OWNER_PUBLIC_FIELDS });
+
+  return property.toObject();
 }

@@ -7,6 +7,7 @@ import {
   type NearbySearchInput,
   type SearchPropertyInput,
   type UpdatePropertyInput,
+  type ReviewPropertyInput,
 } from '@/validators/property.validator';
 
 function parseJsonField<T>(value: unknown, fieldName: string): T {
@@ -88,7 +89,7 @@ export async function getProperty(req: Request, res: Response): Promise<void> {
 
 export async function listProperties(req: Request, res: Response): Promise<void> {
   const result = await propertyService.listProperties(
-    req.query as unknown as SearchPropertyInput
+    req.validatedQuery as SearchPropertyInput
   );
 
   res.status(200).json({
@@ -103,7 +104,7 @@ export async function listProperties(req: Request, res: Response): Promise<void>
 }
 
 export async function searchNearby(req: Request, res: Response): Promise<void> {
-  const result = await propertyService.searchNearby(req.query as unknown as NearbySearchInput);
+  const result = await propertyService.searchNearby(req.validatedQuery as NearbySearchInput);
 
   res.status(200).json({
     success: true,
@@ -144,5 +145,27 @@ export async function deleteProperty(req: Request, res: Response): Promise<void>
   res.status(200).json({
     success: true,
     data: { message: 'Property deleted successfully' },
+  });
+}
+
+export async function listPendingProperties(_req: Request, res: Response): Promise<void> {
+  const pending = await propertyService.listPendingProperties();
+
+  res.status(200).json({
+    success: true,
+    data: { pending },
+  });
+}
+
+export async function reviewProperty(req: Request, res: Response): Promise<void> {
+  const property = await propertyService.reviewProperty(
+    req.user!.id,
+    req.params.id as string,
+    req.body as ReviewPropertyInput
+  );
+
+  res.status(200).json({
+    success: true,
+    data: { property },
   });
 }

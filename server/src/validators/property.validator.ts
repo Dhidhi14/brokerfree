@@ -138,3 +138,20 @@ export type CreatePropertyInput = z.infer<typeof createPropertySchema>;
 export type UpdatePropertyInput = z.infer<typeof updatePropertySchema>;
 export type SearchPropertyInput = z.infer<typeof searchPropertySchema>;
 export type NearbySearchInput = z.infer<typeof nearbySchema>;
+
+export const reviewPropertySchema = z
+  .object({
+    decision: z.enum(['approve', 'reject']),
+    rejectionReason: z.string().trim().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.decision === 'reject' && !data.rejectionReason?.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Rejection reason is required when rejecting',
+        path: ['rejectionReason'],
+      });
+    }
+  });
+
+export type ReviewPropertyInput = z.infer<typeof reviewPropertySchema>;
