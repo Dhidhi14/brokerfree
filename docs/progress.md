@@ -240,4 +240,23 @@
 - ✅ Public AI-Verified badge displays correctly
 - ✅ Owner results view shows amenities, confidence, frame gallery
 
-### Next: Day 10 - Rental Applications
+
+
+## Day 10 - [25-07-2026] Rental Applications
+
+### Built (Backend)
+- ✅ Application model with partial unique index ({property, tenant}
+  scoped to pending/accepted only, allowing re-apply after reject/withdraw)
+- ✅ Apply, view (tenant/owner), respond (accept/reject), withdraw
+- ✅ Denormalized owner field for efficient owner-side queries
+
+### Built (Frontend)
+- ✅ Apply dialog on property detail (disabled if already applied)
+- ✅ My Applications page (tenant) with withdraw
+- ✅ Received Applications page (owner) with filters + accept/reject
+
+### Tested (Full Flow)
+- ✅ Tenant applies → owner sees it in received list → accepts
+- ✅ Status badges and owner response display correctly on both sides
+
+### Next: Day 11 - Chat (Socket.io)
