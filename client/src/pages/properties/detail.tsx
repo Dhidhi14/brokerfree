@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Star,
 } from 'lucide-react';
+import { ApplyDialog } from '@/components/application/apply-dialog';
 import { Navbar } from '@/components/layout/navbar';
 import { AiVerifiedBadge } from '@/components/property/ai-verified-badge';
 import { PropertyStatusBadge } from '@/components/property/property-status-badge';
@@ -20,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useMyApplicationsQuery } from '@/hooks/use-applications';
 import { usePropertyQuery } from '@/hooks/use-properties';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { formatCurrency } from '@/lib/utils';
@@ -41,14 +43,34 @@ function formatLabel(value: string): string {
     .join(' ');
 }
 
+function getApplicationPropertyId(property: string | { _id: string }): string {
+  return typeof property === 'string' ? property : property._id;
+}
+
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((s) => s.user);
   const { data: property, isLoading, isError, error } = usePropertyQuery(id);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [applyOpen, setApplyOpen] = useState(false);
+
+  const isTenant = user?.role === 'tenant';
+  const { data: myApplications = [] } = useMyApplicationsQuery(Boolean(isTenant && id));
+
+  const hasActiveApplication = useMemo(() => {
+    if (!id) return false;
+    return myApplications.some((application) => {
+      const propertyId = getApplicationPropertyId(application.property);
+      return (
+        propertyId === id &&
+        (application.status === 'pending' || application.status === 'accepted')
+      );
+    });
+  }, [id, myApplications]);
 
   const ownerSummary = property ? getOwnerSummary(property.owner) : null;
   const isOwner = property && user ? getOwnerId(property.owner) === user._id : false;
+  const canApply = Boolean(isTenant && property?.status === 'live' && !isOwner);
   const photos = property?.photos ?? [];
   const activePhoto = photos[activePhotoIndex]?.url ?? photos[0]?.url;
   const videoVerification = property?.videoVerification;
@@ -279,6 +301,21 @@ export function PropertyDetailPage() {
                           : 'Included'}
                       </span>
                     </div>
+
+                    {canApply ? (
+                      hasActiveApplication ? (
+                        <Button className="mt-2 w-full" disabled>
+                          Application already submitted
+                        </Button>
+                      ) : (
+                        <Button
+                          className="mt-2 w-full brand-gradient text-primary-foreground hover:opacity-90"
+                          onClick={() => setApplyOpen(true)}
+                        >
+                          Apply Now
+                        </Button>
+                      )
+                    ) : null}
                   </CardContent>
                 </Card>
 
@@ -327,6 +364,15 @@ export function PropertyDetailPage() {
             </div>
 
             <Separator />
+
+            {canApply && property ? (
+              <ApplyDialog
+                propertyId={property._id}
+                propertyTitle={property.title}
+                open={applyOpen}
+                onOpenChange={setApplyOpen}
+              />
+            ) : null}
           </div>
         ) : null}
       </main>

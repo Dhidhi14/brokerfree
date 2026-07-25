@@ -9,6 +9,7 @@ import { LoginPage } from '@/pages/auth/login';
 import { RegisterPage } from '@/pages/auth/register';
 import { VerifyOtpPage } from '@/pages/auth/verify-otp';
 import { NotFoundPage } from '@/pages/not-found';
+import { OwnerApplicationsPage } from '@/pages/owner/applications';
 import { MyPropertiesPage } from '@/pages/owner/properties/index';
 import { NewPropertyPage } from '@/pages/owner/properties/new';
 import { OwnerVideoTourPage } from '@/pages/owner/properties/video-tour';
@@ -16,6 +17,7 @@ import { OwnerDashboardPage } from '@/pages/owner/dashboard';
 import { OwnerKycPage } from '@/pages/owner/kyc';
 import { PropertyDetailPage } from '@/pages/properties/detail';
 import { PropertySearchPage } from '@/pages/properties/search';
+import { TenantApplicationsPage } from '@/pages/tenant/applications';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
 export function AppRoutes() {
@@ -44,10 +46,26 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/tenant/applications"
+        element={
+          <ProtectedRoute allowedRoles={['tenant']}>
+            <TenantApplicationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/owner"
         element={
           <ProtectedRoute allowedRoles={['owner']}>
             <OwnerDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/applications"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <OwnerApplicationsPage />
           </ProtectedRoute>
         }
       />

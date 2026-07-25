@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Building2, CheckCircle2, Loader2, Plus } from 'lucide-react';
+import { Building2, CheckCircle2, ClipboardList, Loader2, Plus } from 'lucide-react';
 import { KycStatusBadge } from '@/components/kyc/kyc-status-badge';
 import { Navbar } from '@/components/layout/navbar';
 import { Badge } from '@/components/ui/badge';
@@ -100,6 +100,25 @@ export function OwnerDashboardPage() {
                   <Plus className="mr-2 h-4 w-4" />
                   Add property
                 </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {isVerified ? (
+          <Card className="mt-6">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0">
+              <div>
+                <CardTitle className="text-lg">Applications</CardTitle>
+                <CardDescription>
+                  Review tenant applications and accept or reject them.
+                </CardDescription>
+              </div>
+              <ClipboardList className="h-5 w-5 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline">
+                <Link to="/owner/applications">View applications</Link>
               </Button>
             </CardContent>
           </Card>

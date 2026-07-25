@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   BadgeCheck,
   Building2,
+  ClipboardList,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -95,6 +96,12 @@ export function Navbar() {
                     </DropdownMenuItem>
                   </>
                 ) : null}
+                {user.role === 'tenant' ? (
+                  <DropdownMenuItem onClick={() => navigate('/tenant/applications')}>
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    My Applications
+                  </DropdownMenuItem>
+                ) : null}
                 {user.role === 'owner' ? (
                   <>
                     <DropdownMenuItem onClick={() => navigate('/owner/kyc')}>
@@ -104,6 +111,10 @@ export function Navbar() {
                     <DropdownMenuItem onClick={() => navigate('/owner/properties')}>
                       <Building2 className="mr-2 h-4 w-4" />
                       My Properties
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/owner/applications')}>
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Applications
                     </DropdownMenuItem>
                   </>
                 ) : null}
@@ -194,6 +205,19 @@ export function Navbar() {
                     </Button>
                   </>
                 ) : null}
+                {user.role === 'tenant' ? (
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      navigate('/tenant/applications');
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    My Applications
+                  </Button>
+                ) : null}
                 {user.role === 'owner' ? (
                   <>
                     <Button
@@ -217,6 +241,17 @@ export function Navbar() {
                     >
                       <Building2 className="mr-2 h-4 w-4" />
                       My Properties
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/owner/applications');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Applications
                     </Button>
                   </>
                 ) : null}
