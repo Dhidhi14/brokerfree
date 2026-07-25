@@ -127,4 +127,32 @@
 - ✅ Owner sees green "verified" state after approval
 - ✅ MongoDB confirms: isAadhaarVerified: true, ownerVerificationStatus: "verified"
 
-### Next: Day 6 - Property Module (CRUD, photo uploads, geospatial search, listing wizard)
+
+## Day 6 - [25-07-2026]
+
+### Built (Property Module Backend)
+- ✅ Property model with geospatial 2dsphere index
+- ✅ Create/list/search/nearby/my-properties/update/delete endpoints
+- ✅ Photo upload to Cloudinary
+- ✅ Owner verification gate (only KYC-verified owners can list)
+- ✅ Admin approval workflow (pending → live/inactive), mirrors KYC review
+- ✅ Audit log entries for property approve/reject
+
+### Bugs Fixed
+1. GET /:id always 404'd for owner previewing own pending property —
+   route had zero auth middleware, req.user always undefined. Fixed
+   with a new optionalAuthenticate middleware.
+2. Express 5 broke req.query mutation (now read-only). Validated
+   query data now goes to req.validatedQuery instead.
+
+### Tested (full lifecycle)
+- ✅ Create property → pending-verification
+- ✅ Admin approves → live → appears in public + geospatial search
+- ✅ Admin rejects → inactive + reason stored
+- ✅ Re-review blocked with 400
+
+### Pending
+- Owner KYC still needs a real (non-manual) end-to-end test for
+  owner@brokerfree.com — tracked, will do before final demo
+
+### Next: Day 6-7 continued — Frontend (listing wizard, search page, detail page, admin property review UI)
