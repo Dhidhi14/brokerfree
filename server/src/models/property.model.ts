@@ -3,6 +3,7 @@ import {
   FURNISHING_TYPES,
   PROPERTY_STATUSES,
   PROPERTY_TYPES,
+  VIDEO_VERIFICATION_STATUSES,
 } from '@/constants/property.constants';
 
 export type PropertyType = (typeof PROPERTY_TYPES)[number];
@@ -10,6 +11,8 @@ export type PropertyType = (typeof PROPERTY_TYPES)[number];
 export type FurnishingType = (typeof FURNISHING_TYPES)[number];
 
 export type PropertyStatus = (typeof PROPERTY_STATUSES)[number];
+
+export type VideoVerificationStatus = (typeof VIDEO_VERIFICATION_STATUSES)[number];
 
 export interface IPropertyAddress {
   line1: string;
@@ -34,6 +37,25 @@ export interface IPropertyPhoto {
 export interface IPropertyVideoTour {
   url: string;
   publicId: string;
+}
+
+export interface IVideoVerificationResult {
+  amenity: string;
+  claimed: boolean;
+  detected: boolean;
+  confidence: number;
+}
+
+export interface IVideoVerification {
+  status: VideoVerificationStatus;
+  videoUrl?: string;
+  videoPublicId?: string;
+  frameUrls: string[];
+  results: IVideoVerificationResult[];
+  overallMatchScore?: number;
+  flaggedIssues: string[];
+  analyzedAt?: Date;
+  errorMessage?: string;
 }
 
 export interface IPropertyPreferences {
@@ -61,6 +83,7 @@ export interface IProperty {
   amenities: string[];
   photos: IPropertyPhoto[];
   videoTour?: IPropertyVideoTour;
+  videoVerification: IVideoVerification;
   preferences: IPropertyPreferences;
   status: PropertyStatus;
   rejectionReason?: string;
@@ -97,6 +120,35 @@ const videoTourSchema = new Schema<IPropertyVideoTour>(
   {
     url: { type: String, required: true },
     publicId: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+const videoVerificationResultSchema = new Schema<IVideoVerificationResult>(
+  {
+    amenity: { type: String, required: true },
+    claimed: { type: Boolean, required: true },
+    detected: { type: Boolean, required: true },
+    confidence: { type: Number, required: true, min: 0, max: 1 },
+  },
+  { _id: false }
+);
+
+const videoVerificationSchema = new Schema<IVideoVerification>(
+  {
+    status: {
+      type: String,
+      enum: VIDEO_VERIFICATION_STATUSES,
+      default: 'not_submitted',
+    },
+    videoUrl: { type: String },
+    videoPublicId: { type: String },
+    frameUrls: { type: [String], default: [] },
+    results: { type: [videoVerificationResultSchema], default: [] },
+    overallMatchScore: { type: Number, min: 0, max: 100 },
+    flaggedIssues: { type: [String], default: [] },
+    analyzedAt: { type: Date },
+    errorMessage: { type: String },
   },
   { _id: false }
 );
@@ -177,6 +229,10 @@ const propertySchema = new Schema<IProperty>(
     amenities: { type: [String], default: [] },
     photos: { type: [photoSchema], default: [] },
     videoTour: videoTourSchema,
+    videoVerification: {
+      type: videoVerificationSchema,
+      default: () => ({ status: 'not_submitted' }),
+    },
     preferences: { type: preferencesSchema, required: true },
     status: {
       type: String,

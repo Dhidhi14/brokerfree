@@ -1,8 +1,14 @@
 export const PROPERTY_CLOUDINARY_FOLDER = 'brokerfree/properties';
 
+export const PROPERTY_VIDEO_CLOUDINARY_FOLDER = 'brokerfree/property-videos';
+
+export const PROPERTY_FRAME_CLOUDINARY_FOLDER = 'brokerfree/property-frames';
+
 export const PROPERTY_MAX_PHOTOS = 10;
 
 export const PROPERTY_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+
+export const PROPERTY_MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024;
 
 export const PROPERTY_ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -12,6 +18,21 @@ export const PROPERTY_ALLOWED_MIME_TYPES = [
 ] as const;
 
 export const PROPERTY_ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'] as const;
+
+export const PROPERTY_VIDEO_ALLOWED_MIME_TYPES = [
+  'video/mp4',
+  'video/quicktime',
+  'video/webm',
+] as const;
+
+export const PROPERTY_VIDEO_ALLOWED_EXTENSIONS = ['.mp4', '.mov', '.webm'] as const;
+
+export const VIDEO_VERIFICATION_STATUSES = [
+  'not_submitted',
+  'processing',
+  'completed',
+  'failed',
+] as const;
 
 export const PROPERTY_TYPES = [
   '1BHK',

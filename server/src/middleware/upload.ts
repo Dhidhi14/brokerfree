@@ -10,6 +10,9 @@ import {
   PROPERTY_ALLOWED_MIME_TYPES,
   PROPERTY_MAX_FILE_SIZE_BYTES,
   PROPERTY_MAX_PHOTOS,
+  PROPERTY_MAX_VIDEO_SIZE_BYTES,
+  PROPERTY_VIDEO_ALLOWED_EXTENSIONS,
+  PROPERTY_VIDEO_ALLOWED_MIME_TYPES,
 } from '@/constants/property.constants';
 import { AppError } from '@/utils/app-error';
 
@@ -157,5 +160,51 @@ export function handlePropertyPhotoUpload(
 ): void {
   uploadPropertyPhotos(req, res, (err: unknown) => {
     handleMulterError(err, next, '5MB');
+  });
+}
+
+const normalizedVideoMimes = PROPERTY_VIDEO_ALLOWED_MIME_TYPES.map((mime) =>
+  mime.toLowerCase()
+);
+
+function isAllowedVideoFile(file: Express.Multer.File): boolean {
+  const normalizedMime = normalizeMime(file.mimetype);
+  const ext = getExtension(file.originalname);
+  return (
+    (normalizedMime !== '' && normalizedVideoMimes.includes(normalizedMime)) ||
+    (ext !== '' && (PROPERTY_VIDEO_ALLOWED_EXTENSIONS as readonly string[]).includes(ext))
+  );
+}
+
+function propertyVideoFileFilter(
+  _req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void {
+  if (isAllowedVideoFile(file)) {
+    cb(null, true);
+    return;
+  }
+
+  cb(
+    new AppError(
+      'Invalid file type. Allowed: MP4, MOV, or WEBM',
+      400,
+      'INVALID_FILE_TYPE'
+    )
+  );
+}
+
+const propertyVideoUpload = multer({
+  storage: memoryStorage,
+  limits: { fileSize: PROPERTY_MAX_VIDEO_SIZE_BYTES, files: 1 },
+  fileFilter: propertyVideoFileFilter,
+});
+
+export const uploadPropertyVideo = propertyVideoUpload.single('video');
+
+export function handleVideoUpload(req: Request, res: Response, next: NextFunction): void {
+  uploadPropertyVideo(req, res, (err: unknown) => {
+    handleMulterError(err, next, '50MB');
   });
 }

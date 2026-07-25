@@ -7,10 +7,12 @@ export interface CloudinaryUploadResult {
   publicId: string;
 }
 
+type CloudinaryResourceType = 'image' | 'raw' | 'video';
+
 function uploadFromBuffer(
   fileBuffer: Buffer,
   folder: string,
-  resourceType: 'image' | 'raw'
+  resourceType: CloudinaryResourceType
 ): Promise<CloudinaryUploadResult> {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -42,6 +44,28 @@ export async function uploadDocument(
     return await uploadFromBuffer(fileBuffer, folder, resourceType);
   } catch {
     throw new AppError('Failed to upload document', 500, 'UPLOAD_FAILED');
+  }
+}
+
+export async function uploadVideo(
+  fileBuffer: Buffer,
+  folder: string
+): Promise<CloudinaryUploadResult> {
+  try {
+    return await uploadFromBuffer(fileBuffer, folder, 'video');
+  } catch {
+    throw new AppError('Failed to upload video', 500, 'UPLOAD_FAILED');
+  }
+}
+
+export async function uploadImage(
+  fileBuffer: Buffer,
+  folder: string
+): Promise<CloudinaryUploadResult> {
+  try {
+    return await uploadFromBuffer(fileBuffer, folder, 'image');
+  } catch {
+    throw new AppError('Failed to upload image', 500, 'UPLOAD_FAILED');
   }
 }
 

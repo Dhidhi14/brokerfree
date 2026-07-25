@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import * as propertyController from '@/controllers/property.controller';
+import * as videoVerificationController from '@/controllers/video-verification.controller';
 import { authenticate, optionalAuthenticate } from '@/middleware/authenticate';
 import { authorize } from '@/middleware/authorize';
-import { handlePropertyPhotoUpload } from '@/middleware/upload';
+import { handlePropertyPhotoUpload, handleVideoUpload } from '@/middleware/upload';
 import { validate } from '@/middleware/validate';
 import { asyncHandler } from '@/utils/async-handler';
 import {
@@ -60,6 +61,21 @@ router.get(
   '/:id',
   optionalAuthenticate,
   asyncHandler(propertyController.getProperty)
+);
+
+router.post(
+  '/:id/video-tour',
+  authenticate,
+  authorize('owner'),
+  handleVideoUpload,
+  asyncHandler(videoVerificationController.submitVideo)
+);
+
+router.get(
+  '/:id/video-status',
+  authenticate,
+  authorize('owner', 'admin'),
+  asyncHandler(videoVerificationController.getVideoStatus)
 );
 
 router.patch(
