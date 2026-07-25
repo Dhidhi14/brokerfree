@@ -7,6 +7,7 @@ import { env } from '@/config/env';
 import { errorHandler } from '@/middleware/error-handler';
 import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
+import { applicationRoutes } from '@/routes/application.routes';
 import { authRoutes } from '@/routes/auth.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
 import { propertyRoutes } from '@/routes/property.routes';
@@ -41,6 +42,7 @@ export function createApp(): express.Application {
   app.use('/api/auth', authRoutes);
   app.use('/api/kyc', kycRoutes);
   app.use('/api/properties', propertyRoutes);
+  app.use('/api/applications', applicationRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
