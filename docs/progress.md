@@ -260,3 +260,26 @@
 - ✅ Status badges and owner response display correctly on both sides
 
 ### Next: Day 11 - Chat (Socket.io)
+
+## Day 11 - [25-07-2026] Chat Backend (Socket.io)
+
+### Built (Backend)
+- ✅ Conversation model (unique trio index: property + tenant + owner)
+- ✅ Message model with pagination-friendly indexes
+- ✅ Chat service: get/create conversation, list, paginated messages,
+  send, mark as read, participant verification
+- ✅ REST endpoints at /api/chat (conversations, messages, read)
+- ✅ Socket.io server attached to the HTTP server, JWT auth via
+  handshake.auth.token
+- ✅ Socket rooms: user:{userId} and conversation:{id}
+- ✅ Socket events: join-conversation, send-message, typing → new-message,
+  typing, joined-conversation, error
+
+### Tested (REST via Postman)
+- ✅ Tenant creates conversation with owner for a property
+- ✅ Tenant sends message → owner sees it in conversations list with
+  correct unreadCount and lastMessage
+- ✅ Owner fetches paginated messages for the conversation
+
+### Next: Day 11 continued - Chat frontend (Socket.io client, conversation
+list, chat thread UI)

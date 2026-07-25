@@ -2,6 +2,7 @@ import http from 'http';
 import { createApp } from '@/app';
 import { connectDB, disconnectDB } from '@/config/db';
 import { env } from '@/config/env';
+import { initSocket } from '@/socket';
 import { logger } from '@/utils/logger';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
@@ -13,6 +14,7 @@ async function bootstrap(): Promise<void> {
 
   const app = createApp();
   server = http.createServer(app);
+  initSocket(server);
 
   server.listen(env.PORT, () => {
     logger.info(`Server listening on port ${env.PORT}`, { env: env.NODE_ENV });

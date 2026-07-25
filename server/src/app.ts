@@ -9,6 +9,7 @@ import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
 import { applicationRoutes } from '@/routes/application.routes';
 import { authRoutes } from '@/routes/auth.routes';
+import { chatRoutes } from '@/routes/chat.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
 import { propertyRoutes } from '@/routes/property.routes';
 
@@ -43,6 +44,7 @@ export function createApp(): express.Application {
   app.use('/api/kyc', kycRoutes);
   app.use('/api/properties', propertyRoutes);
   app.use('/api/applications', applicationRoutes);
+  app.use('/api/chat', chatRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
