@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { SocketProvider } from '@/hooks/use-socket';
 import { queryClient } from '@/lib/query-client';
 import { AppRoutes } from '@/routes';
 import { useAuthStore } from '@/store/auth-store';
@@ -16,8 +17,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AppRoutes />
-        <Toaster position="top-right" richColors closeButton />
+        <SocketProvider>
+          <AppRoutes />
+          <Toaster position="top-right" richColors closeButton />
+        </SocketProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );

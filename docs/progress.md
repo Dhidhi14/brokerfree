@@ -283,3 +283,27 @@
 
 ### Next: Day 11 continued - Chat frontend (Socket.io client, conversation
 list, chat thread UI)
+
+## Day 11 - [25-07-2026] Chat Frontend (Socket.io Client)
+
+### Built (Frontend)
+- ✅ Socket.io client with SocketProvider (reconnects on token change)
+- ✅ Chat API module + types + TanStack Query hooks
+- ✅ Conversations list page with unread badges
+- ✅ Chat thread page: message history (REST), live messages (socket),
+  typing indicator, mark-as-read
+- ✅ "Message Owner" / "Message Tenant" entry points from property
+  detail and applications pages
+- ✅ Navbar Messages link with unread count
+
+### Tested (Real-Time, Two Sessions)
+- ✅ Tenant and owner exchange messages live via Socket.io, no refresh needed
+- ✅ Unread badges update correctly
+- ✅ Typing indicator works
+
+### Fixed
+- apply-dialog.tsx type errors: z.coerce.number() caused an input/output
+  type mismatch with useForm<T>'s generic. Switched to z.number() since
+  the input field already provides a number via valueAsNumber.
+
+### Next: Day 12 - Rent Agreement PDF

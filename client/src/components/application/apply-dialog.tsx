@@ -139,7 +139,11 @@ export function ApplyDialog({
                         type="number"
                         min={1}
                         {...field}
-                        onChange={(event) => field.onChange(event.target.valueAsNumber || '')}
+                        value={field.value}
+                        onChange={(event) => {
+                          const next = event.target.valueAsNumber;
+                          field.onChange(Number.isNaN(next) ? undefined : next);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

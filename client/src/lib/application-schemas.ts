@@ -20,7 +20,8 @@ export const applyApplicationSchema = z.object({
       const date = new Date(value);
       return !Number.isNaN(date.getTime()) && date.getTime() >= startOfTomorrow().getTime();
     }, 'Move-in date must be a future date'),
-  occupants: z.coerce.number().int().min(1, 'At least one occupant is required'),
+  // Use z.number() (not coerce) so RHF input/output types stay aligned with zodResolver
+  occupants: z.number().int().min(1, 'At least one occupant is required'),
 });
 
 export type ApplyApplicationValues = z.infer<typeof applyApplicationSchema>;

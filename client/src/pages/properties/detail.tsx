@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Bath,
@@ -8,9 +8,11 @@ import {
   Loader2,
   MapPin,
   Maximize2,
+  MessageSquare,
   ShieldCheck,
   Star,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { ApplyDialog } from '@/components/application/apply-dialog';
 import { Navbar } from '@/components/layout/navbar';
 import { AiVerifiedBadge } from '@/components/property/ai-verified-badge';
@@ -22,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useMyApplicationsQuery } from '@/hooks/use-applications';
+import { useGetOrCreateConversationMutation } from '@/hooks/use-chat';
 import { usePropertyQuery } from '@/hooks/use-properties';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { formatCurrency } from '@/lib/utils';
@@ -49,10 +52,12 @@ function getApplicationPropertyId(property: string | { _id: string }): string {
 
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const { data: property, isLoading, isError, error } = usePropertyQuery(id);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [applyOpen, setApplyOpen] = useState(false);
+  const startChatMutation = useGetOrCreateConversationMutation();
 
   const isTenant = user?.role === 'tenant';
   const { data: myApplications = [] } = useMyApplicationsQuery(Boolean(isTenant && id));
@@ -71,6 +76,24 @@ export function PropertyDetailPage() {
   const ownerSummary = property ? getOwnerSummary(property.owner) : null;
   const isOwner = property && user ? getOwnerId(property.owner) === user._id : false;
   const canApply = Boolean(isTenant && property?.status === 'live' && !isOwner);
+  const canMessageOwner = Boolean(isTenant && property && !isOwner && hasActiveApplication);
+
+  const handleMessageOwner = () => {
+    if (!property) return;
+    const ownerId = getOwnerId(property.owner);
+
+    startChatMutation.mutate(
+      { propertyId: property._id, otherUserId: ownerId },
+      {
+        onSuccess: (conversation) => {
+          navigate(`/chat/${conversation._id}`);
+        },
+        onError: (err) => {
+          toast.error(getApiErrorMessage(err, 'Failed to start conversation'));
+        },
+      }
+    );
+  };
   const photos = property?.photos ?? [];
   const activePhoto = photos[activePhotoIndex]?.url ?? photos[0]?.url;
   const videoVerification = property?.videoVerification;
@@ -315,6 +338,28 @@ export function PropertyDetailPage() {
                           Apply Now
                         </Button>
                       )
+                    ) : null}
+
+                    {canMessageOwner ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="mt-2 w-full"
+                        disabled={startChatMutation.isPending}
+                        onClick={handleMessageOwner}
+                      >
+                        {startChatMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Opening chat…
+                          </>
+                        ) : (
+                          <>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Message Owner
+                          </>
+                        )}
+                      </Button>
                     ) : null}
                   </CardContent>
                 </Card>

@@ -17,6 +17,8 @@ import { OwnerDashboardPage } from '@/pages/owner/dashboard';
 import { OwnerKycPage } from '@/pages/owner/kyc';
 import { PropertyDetailPage } from '@/pages/properties/detail';
 import { PropertySearchPage } from '@/pages/properties/search';
+import { ConversationsPage } from '@/pages/chat/conversations';
+import { ChatThreadPage } from '@/pages/chat/thread';
 import { TenantApplicationsPage } from '@/pages/tenant/applications';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
@@ -26,6 +28,22 @@ export function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/properties" element={<PropertySearchPage />} />
       <Route path="/properties/:id" element={<PropertyDetailPage />} />
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <ConversationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chat/:conversationId"
+        element={
+          <ProtectedRoute>
+            <ChatThreadPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/login"
         element={

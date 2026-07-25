@@ -7,12 +7,14 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquare,
   Shield,
   User,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -21,6 +23,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useConversationsQuery } from '@/hooks/use-chat';
+import { sumUnreadConversations } from '@/lib/chat-utils';
 import { getDashboardPath } from '@/lib/role-routes';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth-store';
@@ -38,6 +42,8 @@ export function Navbar() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuthStore();
+  const { data: conversations = [] } = useConversationsQuery(Boolean(isAuthenticated && user));
+  const unreadTotal = sumUnreadConversations(conversations, user?.role);
 
   const handleLogout = async () => {
     await logout();
@@ -64,6 +70,18 @@ export function Navbar() {
             <Link to="/properties">Browse Properties</Link>
           </Button>
           {isAuthenticated && user ? (
+            <>
+              <Button variant="ghost" asChild className="relative">
+                <Link to="/chat">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Messages
+                  {unreadTotal > 0 ? (
+                    <Badge className="ml-2 h-5 min-w-5 justify-center bg-indigo-600 px-1.5 hover:bg-indigo-600">
+                      {unreadTotal > 99 ? '99+' : unreadTotal}
+                    </Badge>
+                  ) : null}
+                </Link>
+              </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
@@ -131,6 +149,7 @@ export function Navbar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </>
           ) : (
             <>
               <Button variant="ghost" asChild>
@@ -168,6 +187,22 @@ export function Navbar() {
             {isAuthenticated && user ? (
               <>
                 <p className="px-2 text-sm font-medium">{user.fullName}</p>
+                <Button
+                  variant="ghost"
+                  className="justify-start"
+                  onClick={() => {
+                    navigate('/chat');
+                    setMobileOpen(false);
+                  }}
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Messages
+                  {unreadTotal > 0 ? (
+                    <Badge className="ml-2 h-5 min-w-5 justify-center bg-indigo-600 px-1.5 hover:bg-indigo-600">
+                      {unreadTotal > 99 ? '99+' : unreadTotal}
+                    </Badge>
+                  ) : null}
+                </Button>
                 <Button
                   variant="ghost"
                   className="justify-start"
