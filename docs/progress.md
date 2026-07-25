@@ -208,4 +208,36 @@
 - Owner KYC still needs a real (non-manual) end-to-end test for
   owner@brokerfree.com — tracked, will do before final demo
 
-### Next: Day 8-9 — AI Video Verification
+
+
+## Day 8-9 - [25-07-2026] AI Video Verification
+
+### Built (Backend)
+- ✅ ffmpeg-based frame extraction (6 frames per video)
+- ✅ Video + frame upload to Cloudinary
+- ✅ Mock AI analysis service (swappable interface, same pattern as
+  KYC mock) — deterministic trap amenities (pool/garden/home theatre)
+  for demoable mismatch detection
+- ✅ Async processing (processing → completed/failed), polled by client
+- ✅ Property model: videoVerification sub-document with results,
+  overallMatchScore, flaggedIssues
+
+### Built (Frontend)
+- ✅ Video uploader component
+- ✅ Verification status component (processing spinner, results card,
+  frame lightbox)
+- ✅ AI-Verified public trust badge on property detail page
+- ✅ My Properties: Add/View Video Tour per property
+
+### Bugs Fixed
+1. Missing ffprobe binary — ffmpeg-static only bundles ffmpeg, not
+   ffprobe; fluent-ffmpeg needs both. Installed ffprobe-static and
+   wired setFfprobePath separately.
+
+### Tested (Full Flow)
+- ✅ Real video → real frame extraction → Cloudinary storage →
+  mock analysis → 86% match score with 2 correctly flagged mismatches
+- ✅ Public AI-Verified badge displays correctly
+- ✅ Owner results view shows amenities, confidence, frame gallery
+
+### Next: Day 10 - Rental Applications
