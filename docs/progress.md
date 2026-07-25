@@ -259,7 +259,6 @@
 - ✅ Tenant applies → owner sees it in received list → accepts
 - ✅ Status badges and owner response display correctly on both sides
 
-### Next: Day 11 - Chat (Socket.io)
 
 ## Day 11 - [25-07-2026] Chat Backend (Socket.io)
 
@@ -281,8 +280,6 @@
   correct unreadCount and lastMessage
 - ✅ Owner fetches paginated messages for the conversation
 
-### Next: Day 11 continued - Chat frontend (Socket.io client, conversation
-list, chat thread UI)
 
 ## Day 11 - [25-07-2026] Chat Frontend (Socket.io Client)
 
@@ -307,3 +304,24 @@ list, chat thread UI)
   the input field already provides a number via valueAsNumber.
 
 ### Next: Day 12 - Rent Agreement PDF
+
+## Day 12 - [25-07-2026] Rent Agreement PDF (Backend)
+
+### Built (Backend)
+- ✅ Agreement model (one per application, terms snapshot from property)
+- ✅ PDF generation service (pdfkit) — property address, party details,
+  terms, boilerplate clauses, signature lines
+- ✅ PDF uploaded to Cloudinary (raw resource type, agreements folder)
+- ✅ Agreement service: create (idempotent), get, list mine, sign
+- ✅ Signing state machine: draft → pending-signatures → executed
+  (once both tenant and owner sign)
+- ✅ REST endpoints at /api/agreements
+
+### Tested (Full Flow via Postman)
+- ✅ Created agreement from an accepted application — real PDF
+  generated and opens correctly from Cloudinary
+- ✅ Tenant signs → tenantSignedAt set
+- ✅ Owner signs → ownerSignedAt set, status → executed
+
+### Next: Day 12 continued - Agreement frontend (view/download PDF,
+sign button, status display)

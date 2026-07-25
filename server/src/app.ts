@@ -7,6 +7,7 @@ import { env } from '@/config/env';
 import { errorHandler } from '@/middleware/error-handler';
 import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
+import { agreementRoutes } from '@/routes/agreement.routes';
 import { applicationRoutes } from '@/routes/application.routes';
 import { authRoutes } from '@/routes/auth.routes';
 import { chatRoutes } from '@/routes/chat.routes';
@@ -45,6 +46,7 @@ export function createApp(): express.Application {
   app.use('/api/properties', propertyRoutes);
   app.use('/api/applications', applicationRoutes);
   app.use('/api/chat', chatRoutes);
+  app.use('/api/agreements', agreementRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
