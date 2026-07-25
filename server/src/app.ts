@@ -9,6 +9,7 @@ import { notFoundHandler } from '@/middleware/not-found';
 import { morganStream } from '@/utils/logger';
 import { authRoutes } from '@/routes/auth.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
+import { propertyRoutes } from '@/routes/property.routes';
 
 export function createApp(): express.Application {
   const app = express();
@@ -39,6 +40,7 @@ export function createApp(): express.Application {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/kyc', kycRoutes);
+  app.use('/api/properties', propertyRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
