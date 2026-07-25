@@ -1,11 +1,28 @@
 import { Link } from 'react-router-dom';
-import { Building2, Loader2, Plus } from 'lucide-react';
+import { Building2, Clapperboard, Loader2, Plus, ShieldCheck } from 'lucide-react';
 import { Navbar } from '@/components/layout/navbar';
 import { PropertyCard } from '@/components/property/property-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useMyPropertiesQuery } from '@/hooks/use-properties';
 import { getApiErrorMessage } from '@/lib/api-error';
+import type { VideoVerificationStatus } from '@/types/property.types';
+
+function videoTourCta(status: VideoVerificationStatus | undefined): {
+  label: string;
+  icon: typeof Clapperboard;
+} {
+  if (!status || status === 'not_submitted') {
+    return { label: 'Add Video Tour', icon: Clapperboard };
+  }
+  if (status === 'processing') {
+    return { label: 'Verification in progress', icon: Loader2 };
+  }
+  if (status === 'failed') {
+    return { label: 'Retry Video Tour', icon: Clapperboard };
+  }
+  return { label: 'View Verification', icon: ShieldCheck };
+}
 
 export function MyPropertiesPage() {
   const { data: properties = [], isLoading, isError, error } = useMyPropertiesQuery();
@@ -63,17 +80,42 @@ export function MyPropertiesPage() {
 
         {!isLoading && !isError && properties.length > 0 ? (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {properties.map((property) => (
-              <div key={property._id} className="space-y-2">
-                <PropertyCard property={property} showStatus />
-                {property.status === 'inactive' && property.rejectionReason ? (
-                  <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-                    <span className="font-medium">Rejection reason:</span>{' '}
-                    {property.rejectionReason}
-                  </p>
-                ) : null}
-              </div>
-            ))}
+            {properties.map((property) => {
+              const videoStatus = property.videoVerification?.status;
+              const cta = videoTourCta(videoStatus);
+              const CtaIcon = cta.icon;
+
+              return (
+                <div key={property._id} className="space-y-2">
+                  <PropertyCard property={property} showStatus />
+                  <Button asChild variant="outline" className="w-full" size="sm">
+                    <Link
+                      to={`/owner/properties/${property._id}/video-tour`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <CtaIcon
+                        className={
+                          videoStatus === 'processing'
+                            ? 'mr-2 h-4 w-4 animate-spin'
+                            : 'mr-2 h-4 w-4'
+                        }
+                      />
+                      {cta.label}
+                      {videoStatus === 'completed' &&
+                      property.videoVerification?.overallMatchScore !== undefined
+                        ? ` · ${Math.round(property.videoVerification.overallMatchScore)}%`
+                        : null}
+                    </Link>
+                  </Button>
+                  {property.status === 'inactive' && property.rejectionReason ? (
+                    <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                      <span className="font-medium">Rejection reason:</span>{' '}
+                      {property.rejectionReason}
+                    </p>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         ) : null}
       </main>

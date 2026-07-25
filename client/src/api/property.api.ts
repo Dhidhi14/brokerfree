@@ -7,6 +7,7 @@ import type {
   Property,
   PropertyListFilters,
   PropertyListResult,
+  VideoVerification,
 } from '@/types/property.types';
 
 export interface PropertyData {
@@ -98,4 +99,33 @@ export function reviewProperty(
     body.rejectionReason = rejectionReason;
   }
   return apiPatch<PropertyData>(`/properties/${id}/review`, body);
+}
+
+export interface SubmitVideoTourData {
+  propertyId: string;
+  videoVerification: VideoVerification;
+}
+
+export interface VideoStatusData {
+  videoVerification: VideoVerification;
+}
+
+export async function submitVideoTour(
+  propertyId: string,
+  formData: FormData
+): Promise<ApiResponse<SubmitVideoTourData>> {
+  const response = await apiClient.post<ApiResponse<SubmitVideoTourData>>(
+    `/properties/${propertyId}/video-tour`,
+    formData,
+    {
+      headers: { 'Content-Type': undefined },
+    }
+  );
+  return response.data;
+}
+
+export function getVideoStatus(
+  propertyId: string
+): Promise<ApiResponse<VideoStatusData>> {
+  return apiGet<VideoStatusData>(`/properties/${propertyId}/video-status`);
 }

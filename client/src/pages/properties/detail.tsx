@@ -4,13 +4,17 @@ import {
   ArrowLeft,
   Bath,
   Building2,
+  Clapperboard,
   Loader2,
   MapPin,
   Maximize2,
+  ShieldCheck,
   Star,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/navbar';
+import { AiVerifiedBadge } from '@/components/property/ai-verified-badge';
 import { PropertyStatusBadge } from '@/components/property/property-status-badge';
+import { VideoVerificationStatus } from '@/components/property/video-verification-status';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -47,6 +51,12 @@ export function PropertyDetailPage() {
   const isOwner = property && user ? getOwnerId(property.owner) === user._id : false;
   const photos = property?.photos ?? [];
   const activePhoto = photos[activePhotoIndex]?.url ?? photos[0]?.url;
+  const videoVerification = property?.videoVerification;
+  const completedMatchScore =
+    videoVerification?.status === 'completed'
+      ? videoVerification.overallMatchScore
+      : undefined;
+  const isAiVerified = completedMatchScore !== undefined;
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,7 +154,12 @@ export function PropertyDetailPage() {
             <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
               <div className="space-y-6">
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{property.title}</h1>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                      {property.title}
+                    </h1>
+                    {isAiVerified ? <AiVerifiedBadge score={completedMatchScore} /> : null}
+                  </div>
                   <p className="mt-2 flex items-start gap-2 text-muted-foreground">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
                     {property.address.line1}
@@ -190,6 +205,38 @@ export function PropertyDetailPage() {
                         </Badge>
                       ))}
                     </div>
+                  </div>
+                ) : null}
+
+                {isOwner ? (
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h2 className="text-lg font-semibold">Video tour verification</h2>
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={`/owner/properties/${property._id}/video-tour`}>
+                          {!videoVerification || videoVerification.status === 'not_submitted' ? (
+                            <>
+                              <Clapperboard className="mr-2 h-4 w-4" />
+                              Add Video Tour
+                            </>
+                          ) : (
+                            <>
+                              <ShieldCheck className="mr-2 h-4 w-4" />
+                              Manage verification
+                            </>
+                          )}
+                        </Link>
+                      </Button>
+                    </div>
+                    {videoVerification &&
+                    videoVerification.status !== 'not_submitted' ? (
+                      <VideoVerificationStatus videoVerification={videoVerification} />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Upload a walkthrough video so AI can verify your amenities — a key trust
+                        signal for tenants.
+                      </p>
+                    )}
                   </div>
                 ) : null}
 
@@ -264,6 +311,18 @@ export function PropertyDetailPage() {
                     Verified BrokerFree listing
                   </CardContent>
                 </Card>
+
+                {isAiVerified ? (
+                  <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-violet-50/50">
+                    <CardContent className="space-y-2 py-4">
+                      <AiVerifiedBadge score={completedMatchScore} size="md" />
+                      <p className="text-xs text-muted-foreground">
+                        Amenities in this listing were cross-checked against an AI-analyzed video
+                        tour.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : null}
               </div>
             </div>
 

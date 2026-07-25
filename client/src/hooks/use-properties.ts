@@ -11,6 +11,7 @@ export const propertyKeys = {
   detail: (id: string) => [...propertyKeys.all, 'detail', id] as const,
   mine: () => [...propertyKeys.all, 'mine'] as const,
   pending: () => [...propertyKeys.all, 'pending'] as const,
+  videoStatus: (id: string) => [...propertyKeys.all, 'video-status', id] as const,
 };
 
 export function usePropertiesQuery(filters: PropertyListFilters, enabled = true) {
@@ -122,6 +123,53 @@ export function useReviewPropertyMutation() {
       void queryClient.invalidateQueries({ queryKey: propertyKeys.pending() });
       void queryClient.invalidateQueries({ queryKey: propertyKeys.detail(variables.id) });
       void queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
+    },
+  });
+}
+
+export function useVideoStatusQuery(propertyId: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: propertyKeys.videoStatus(propertyId ?? ''),
+    queryFn: async () => {
+      const response = await propertyApi.getVideoStatus(propertyId!);
+
+      if (!response.success || !response.data) {
+        throw new Error(getApiResponseError(response, 'Failed to load video verification status'));
+      }
+
+      return response.data.videoVerification;
+    },
+    enabled: enabled && Boolean(propertyId),
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === 'processing' ? 3000 : false;
+    },
+  });
+}
+
+export function useSubmitVideoTourMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      propertyId,
+      formData,
+    }: {
+      propertyId: string;
+      formData: FormData;
+    }) => {
+      const response = await propertyApi.submitVideoTour(propertyId, formData);
+
+      if (!response.success || !response.data) {
+        throw new Error(getApiResponseError(response, 'Failed to submit video tour'));
+      }
+
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(propertyKeys.videoStatus(data.propertyId), data.videoVerification);
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.detail(data.propertyId) });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.mine() });
     },
   });
 }

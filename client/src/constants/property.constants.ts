@@ -12,6 +12,19 @@ export const PROPERTY_MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const PROPERTY_ACCEPT_STRING = 'image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
 
+export const PROPERTY_MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024;
+
+export const PROPERTY_VIDEO_ACCEPT_STRING =
+  'video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm';
+
+export const PROPERTY_VIDEO_ALLOWED_MIME_TYPES = [
+  'video/mp4',
+  'video/quicktime',
+  'video/webm',
+] as const;
+
+export const PROPERTY_VIDEO_ALLOWED_EXTENSIONS = ['.mp4', '.mov', '.webm'] as const;
+
 export const AMENITY_GROUPS = {
   basic: [
     { value: '24x7-water', label: '24×7 Water' },

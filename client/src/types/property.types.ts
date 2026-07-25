@@ -27,6 +27,31 @@ export interface PropertyPhoto {
   isCover: boolean;
 }
 
+export type VideoVerificationStatus =
+  | 'not_submitted'
+  | 'processing'
+  | 'completed'
+  | 'failed';
+
+export interface VideoVerificationResult {
+  amenity: string;
+  claimed: boolean;
+  detected: boolean;
+  confidence: number;
+}
+
+export interface VideoVerification {
+  status: VideoVerificationStatus;
+  videoUrl?: string;
+  videoPublicId?: string;
+  frameUrls: string[];
+  results: VideoVerificationResult[];
+  overallMatchScore?: number;
+  flaggedIssues: string[];
+  analyzedAt?: string;
+  errorMessage?: string;
+}
+
 export interface PropertyPreferences {
   bachelors: boolean;
   families: boolean;
@@ -67,6 +92,7 @@ export interface Property {
   amenities: string[];
   photos: PropertyPhoto[];
   videoTour?: { url: string; publicId: string };
+  videoVerification?: VideoVerification;
   preferences: PropertyPreferences;
   status: PropertyStatus;
   rejectionReason?: string;

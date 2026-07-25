@@ -11,6 +11,7 @@ import { VerifyOtpPage } from '@/pages/auth/verify-otp';
 import { NotFoundPage } from '@/pages/not-found';
 import { MyPropertiesPage } from '@/pages/owner/properties/index';
 import { NewPropertyPage } from '@/pages/owner/properties/new';
+import { OwnerVideoTourPage } from '@/pages/owner/properties/video-tour';
 import { OwnerDashboardPage } from '@/pages/owner/dashboard';
 import { OwnerKycPage } from '@/pages/owner/kyc';
 import { PropertyDetailPage } from '@/pages/properties/detail';
@@ -71,6 +72,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['owner']}>
             <NewPropertyPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/properties/:id/video-tour"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <OwnerVideoTourPage />
           </ProtectedRoute>
         }
       />
