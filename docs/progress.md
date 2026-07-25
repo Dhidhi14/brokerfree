@@ -323,5 +323,32 @@
 - ✅ Tenant signs → tenantSignedAt set
 - ✅ Owner signs → ownerSignedAt set, status → executed
 
-### Next: Day 12 continued - Agreement frontend (view/download PDF,
-sign button, status display)
+### Built (Frontend)
+- ✅ Agreement API module + types + TanStack Query hooks
+- ✅ Agreement status badge (draft / pending-signatures / executed)
+- ✅ My Agreements list page + Agreement detail page
+- ✅ Detail: terms summary, View/Download PDF, dual signature status,
+  confirm-to-sign dialog, executed celebration banner
+- ✅ "Agreement" CTA on accepted applications (tenant + owner) —
+  idempotent create then navigate
+- ✅ Routes `/agreements`, `/agreements/:id` + Navbar link
+
+### Next: Day 13
+
+## Day 12 - [25-07-2026] Rent Agreement Frontend
+
+### Built (Frontend)
+- ✅ Agreement API module, types, TanStack Query hooks
+- ✅ Agreement status badge (draft/pending-signatures/executed)
+- ✅ My Agreements list page
+- ✅ Agreement detail page: lease terms summary, PDF link, digital
+  signature panel with confirm dialog, executed celebration banner
+- ✅ "Agreement" CTA on accepted applications (tenant + owner sides),
+  idempotent create-or-get flow
+- ✅ Navbar "Agreements" link
+
+### Tested (Browser, Both Roles)
+- ✅ Executed agreement displays correctly for both tenant and owner
+- ✅ Terms, PDF link, and both signature timestamps render correctly
+
+### Next: Day 13-14 - Escrow (Razorpay)

@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   Building2,
   ClipboardList,
+  FileText,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -82,6 +83,14 @@ export function Navbar() {
                   ) : null}
                 </Link>
               </Button>
+              {user.role === 'tenant' || user.role === 'owner' ? (
+                <Button variant="ghost" asChild>
+                  <Link to="/agreements">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Agreements
+                  </Link>
+                </Button>
+              ) : null}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
@@ -203,6 +212,19 @@ export function Navbar() {
                     </Badge>
                   ) : null}
                 </Button>
+                {user.role === 'tenant' || user.role === 'owner' ? (
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      navigate('/agreements');
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Agreements
+                  </Button>
+                ) : null}
                 <Button
                   variant="ghost"
                   className="justify-start"

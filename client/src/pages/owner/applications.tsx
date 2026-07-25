@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Loader2, MessageSquare, Phone, Users } from 'lucide-react';
+import { FileText, Loader2, MessageSquare, Phone, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { ApplicationStatusBadge } from '@/components/application/application-status-badge';
 import { RespondDialog } from '@/components/application/respond-dialog';
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useCreateAgreementMutation } from '@/hooks/use-agreements';
 import {
   useReceivedApplicationsQuery,
   useRespondToApplicationMutation,
@@ -81,6 +82,8 @@ export function OwnerApplicationsPage() {
   } = useReceivedApplicationsQuery(filters);
   const respondMutation = useRespondToApplicationMutation();
   const startChatMutation = useGetOrCreateConversationMutation();
+  const createAgreementMutation = useCreateAgreementMutation();
+  const [agreementApplicationId, setAgreementApplicationId] = useState<string | null>(null);
 
   const handleAccept = (applicationId: string) => {
     respondMutation.mutate(
@@ -115,6 +118,21 @@ export function OwnerApplicationsPage() {
         },
       }
     );
+  };
+
+  const handleOpenAgreement = (applicationId: string) => {
+    setAgreementApplicationId(applicationId);
+    createAgreementMutation.mutate(applicationId, {
+      onSuccess: (agreement) => {
+        navigate(`/agreements/${agreement._id}`);
+      },
+      onError: (err) => {
+        toast.error(getApiErrorMessage(err, 'Failed to open agreement'));
+      },
+      onSettled: () => {
+        setAgreementApplicationId(null);
+      },
+    });
   };
 
   return (
@@ -297,6 +315,28 @@ export function OwnerApplicationsPage() {
                                 Reject
                               </Button>
                             </>
+                          ) : null}
+
+                          {application.status === 'accepted' ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="brand-gradient text-primary-foreground hover:opacity-90"
+                              disabled={agreementApplicationId === application._id}
+                              onClick={() => handleOpenAgreement(application._id)}
+                            >
+                              {agreementApplicationId === application._id ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Opening…
+                                </>
+                              ) : (
+                                <>
+                                  <FileText className="mr-2 h-4 w-4" />
+                                  Agreement
+                                </>
+                              )}
+                            </Button>
                           ) : null}
                         </div>
                       ) : null}

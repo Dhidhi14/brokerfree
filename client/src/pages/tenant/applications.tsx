@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Loader2, MapPin } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FileText, Loader2, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { ApplicationStatusBadge } from '@/components/application/application-status-badge';
 import { Navbar } from '@/components/layout/navbar';
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useCreateAgreementMutation } from '@/hooks/use-agreements';
 import {
   useMyApplicationsQuery,
   useWithdrawApplicationMutation,
@@ -47,9 +48,12 @@ function previewMessage(message: string, max = 120): string {
 }
 
 export function TenantApplicationsPage() {
+  const navigate = useNavigate();
   const { data: applications = [], isLoading, isError, error } = useMyApplicationsQuery();
   const withdrawMutation = useWithdrawApplicationMutation();
+  const createAgreementMutation = useCreateAgreementMutation();
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
+  const [agreementApplicationId, setAgreementApplicationId] = useState<string | null>(null);
 
   const handleWithdraw = () => {
     if (!withdrawId) return;
@@ -61,6 +65,21 @@ export function TenantApplicationsPage() {
       },
       onError: (err) => {
         toast.error(getApiErrorMessage(err, 'Failed to withdraw application'));
+      },
+    });
+  };
+
+  const handleOpenAgreement = (applicationId: string) => {
+    setAgreementApplicationId(applicationId);
+    createAgreementMutation.mutate(applicationId, {
+      onSuccess: (agreement) => {
+        navigate(`/agreements/${agreement._id}`);
+      },
+      onError: (err) => {
+        toast.error(getApiErrorMessage(err, 'Failed to open agreement'));
+      },
+      onSettled: () => {
+        setAgreementApplicationId(null);
       },
     });
   };
@@ -164,19 +183,46 @@ export function TenantApplicationsPage() {
                       </CardContent>
                     </Link>
 
-                    {application.status === 'pending' ? (
-                      <div className="border-t px-4 py-3">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            setWithdrawId(application._id);
-                          }}
-                        >
-                          Withdraw
-                        </Button>
+                    {application.status === 'pending' ||
+                    application.status === 'accepted' ? (
+                      <div className="flex flex-wrap gap-2 border-t px-4 py-3">
+                        {application.status === 'pending' ? (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              setWithdrawId(application._id);
+                            }}
+                          >
+                            Withdraw
+                          </Button>
+                        ) : null}
+                        {application.status === 'accepted' ? (
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="brand-gradient text-primary-foreground hover:opacity-90"
+                            disabled={agreementApplicationId === application._id}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              handleOpenAgreement(application._id);
+                            }}
+                          >
+                            {agreementApplicationId === application._id ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Opening…
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="mr-2 h-4 w-4" />
+                                Agreement
+                              </>
+                            )}
+                          </Button>
+                        ) : null}
                       </div>
                     ) : null}
                   </Card>

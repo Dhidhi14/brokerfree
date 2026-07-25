@@ -19,6 +19,8 @@ import { PropertyDetailPage } from '@/pages/properties/detail';
 import { PropertySearchPage } from '@/pages/properties/search';
 import { ConversationsPage } from '@/pages/chat/conversations';
 import { ChatThreadPage } from '@/pages/chat/thread';
+import { AgreementDetailPage } from '@/pages/agreements/detail';
+import { MyAgreementsPage } from '@/pages/agreements/my-agreements';
 import { TenantApplicationsPage } from '@/pages/tenant/applications';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
@@ -41,6 +43,22 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <ChatThreadPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agreements"
+        element={
+          <ProtectedRoute allowedRoles={['tenant', 'owner']}>
+            <MyAgreementsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agreements/:id"
+        element={
+          <ProtectedRoute allowedRoles={['tenant', 'owner']}>
+            <AgreementDetailPage />
           </ProtectedRoute>
         }
       />
