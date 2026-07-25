@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { Building2, CheckCircle2, Loader2, Plus } from 'lucide-react';
 import { KycStatusBadge } from '@/components/kyc/kyc-status-badge';
 import { Navbar } from '@/components/layout/navbar';
 import { Badge } from '@/components/ui/badge';
@@ -11,12 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useMyPropertiesQuery } from '@/hooks/use-properties';
 import { useKycStatusQuery } from '@/hooks/use-kyc';
 import { useAuthStore } from '@/store/auth-store';
 
 export function OwnerDashboardPage() {
   const user = useAuthStore((s) => s.user);
   const { data: kyc, isLoading: kycLoading } = useKycStatusQuery();
+  const { data: properties = [], isLoading: propertiesLoading } = useMyPropertiesQuery(
+    kyc?.status === 'verified'
+  );
 
   const isVerified = kyc?.status === 'verified';
 
@@ -31,8 +35,7 @@ export function OwnerDashboardPage() {
           Welcome{user ? `, ${user.fullName}` : ''}
         </h1>
         <p className="mt-3 text-muted-foreground">
-          Your owner dashboard is ready. Listings and tenant applications will appear here
-          soon.
+          Manage your verified listings and tenant applications from here.
         </p>
 
         <Card className="mt-8">
@@ -74,6 +77,33 @@ export function OwnerDashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {isVerified ? (
+          <Card className="mt-6">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0">
+              <div>
+                <CardTitle className="text-lg">My properties</CardTitle>
+                <CardDescription>
+                  {propertiesLoading
+                    ? 'Loading your listings…'
+                    : `${properties.length} listing${properties.length === 1 ? '' : 's'}`}
+                </CardDescription>
+              </div>
+              <Building2 className="h-5 w-5 text-primary" />
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-3">
+              <Button asChild variant="outline">
+                <Link to="/owner/properties">View all properties</Link>
+              </Button>
+              <Button asChild className="brand-gradient text-primary-foreground hover:opacity-90">
+                <Link to="/owner/properties/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add property
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
       </main>
     </div>
   );

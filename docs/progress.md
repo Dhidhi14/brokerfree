@@ -156,3 +156,56 @@
   owner@brokerfree.com — tracked, will do before final demo
 
 ### Next: Day 6-7 continued — Frontend (listing wizard, search page, detail page, admin property review UI)
+
+## Day 6-7 - [25-07-2026] Property Module Frontend
+
+### Built (Property Module Frontend)
+- ✅ Property API module + types (property.api.ts, property.types.ts)
+- ✅ Property card component (photo, title, rent, bed/bath/area chips)
+- ✅ Property listing wizard — 4 steps (basics, location, pricing, photos)
+- ✅ My Properties page (owner) with status badges
+- ✅ Public search/browse page with filters, sort, pagination
+- ✅ Property detail page (gallery, owner info, status banners)
+- ✅ Admin property verifications page (mirrors KYC review UI)
+- ✅ Property approval workflow wired end-to-end in the UI
+- ✅ Navbar + dashboard updates for all three roles
+
+### Bugs Fixed
+1. Wizard crashed (blank white screen) on Location step — a FormLabel
+   was used outside its required FormField context (shadcn/react-hook-form
+   pattern violation).
+2. Numeric inputs (rent, deposit, maintenance, etc.) couldn't be cleared/
+   edited normally — display was derived directly from the numeric form
+   value on every render instead of holding a separate local "typing"
+   state, so edits got overwritten mid-keystroke. Fixed by keeping local
+   string state while focused, syncing to the form only on change, and
+   syncing back from the form only when not focused.
+3. Required numeric fields silently substituted hardcoded fallback values
+   (e.g. rent → 15000) when left empty instead of showing a validation
+   error — a UX/data-integrity risk. Removed all silent fallbacks for
+   required fields; they now properly show "X is required" on submit.
+4. Login appeared to fully reload the page instead of showing an error
+   toast. Root cause: the axios response interceptor treated every 401
+   (including a wrong-password login attempt) as an expired session,
+   tried to refresh, failed, and force-redirected with
+   window.location.href. Fixed by excluding auth endpoints
+   (login/register/refresh) from the auto-refresh-and-redirect logic.
+5. Admin login intermittently failed with "Invalid email or password"
+   despite correct-looking credentials — traced to an actual password/
+   hash mismatch (confirmed via direct bcrypt.compare testing) rather
+   than a UI bug. Fixed by resetting the password through the model's
+   normal password field + .save() so the pre-validate hashing hook
+   re-ran correctly.
+
+### Tested (Full Flow in Browser)
+- ✅ Guest browses live properties on /properties
+- ✅ Verified owner completes the 4-step wizard → property created
+  as pending-verification
+- ✅ Admin reviews pending property, views documents, approves
+- ✅ Approved property appears in public search and geospatial "near me"
+
+### Pending
+- Owner KYC still needs a real (non-manual) end-to-end test for
+  owner@brokerfree.com — tracked, will do before final demo
+
+### Next: Day 8-9 — AI Video Verification

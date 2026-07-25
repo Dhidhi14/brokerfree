@@ -26,6 +26,23 @@ interface RetryConfig extends InternalAxiosRequestConfig {
 
 let refreshPromise: Promise<string | null> | null = null;
 
+/** 401s on these routes are expected auth outcomes — do not refresh or hard-redirect. */
+const SKIP_AUTH_REFRESH_PATHS = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh-token',
+  '/auth/logout',
+] as const;
+
+const AUTH_PAGE_PATHS = new Set(['/login', '/register', '/verify-otp']);
+
+function shouldSkipAuthRefresh(url: string | undefined): boolean {
+  if (!url) {
+    return true;
+  }
+  return SKIP_AUTH_REFRESH_PATHS.some((path) => url.includes(path));
+}
+
 async function refreshAccessToken(): Promise<string | null> {
   if (!refreshPromise) {
     refreshPromise = axios
@@ -68,7 +85,7 @@ apiClient.interceptors.response.use(
       error.response?.status !== 401 ||
       !originalRequest ||
       originalRequest._retry ||
-      originalRequest.url?.includes('/auth/refresh-token')
+      shouldSkipAuthRefresh(originalRequest.url)
     ) {
       return Promise.reject(error);
     }
@@ -79,7 +96,10 @@ apiClient.interceptors.response.use(
 
     if (!newToken) {
       await useAuthStore.getState().logout();
-      window.location.href = '/login';
+      // Soft-fail on auth pages so login/register can show toasts instead of reloading.
+      if (!AUTH_PAGE_PATHS.has(window.location.pathname)) {
+        window.location.href = '/login';
+      }
       return Promise.reject(error);
     }
 

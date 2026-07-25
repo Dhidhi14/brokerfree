@@ -1,0 +1,82 @@
+import { Link } from 'react-router-dom';
+import { Building2, Loader2, Plus } from 'lucide-react';
+import { Navbar } from '@/components/layout/navbar';
+import { PropertyCard } from '@/components/property/property-card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useMyPropertiesQuery } from '@/hooks/use-properties';
+import { getApiErrorMessage } from '@/lib/api-error';
+
+export function MyPropertiesPage() {
+  const { data: properties = [], isLoading, isError, error } = useMyPropertiesQuery();
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main className="mx-auto max-w-6xl px-4 py-8 animate-slide-up">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">My properties</h1>
+            <p className="mt-2 text-muted-foreground">
+              Manage your listings and track verification status.
+            </p>
+          </div>
+          <Button asChild className="brand-gradient text-primary-foreground hover:opacity-90">
+            <Link to="/owner/properties/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add property
+            </Link>
+          </Button>
+        </div>
+
+        {isLoading ? (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" aria-label="Loading" />
+          </div>
+        ) : null}
+
+        {isError ? (
+          <Card className="mt-8 border-destructive/30">
+            <CardContent className="py-8 text-center">
+              <p className="text-destructive">
+                {getApiErrorMessage(error, 'Failed to load your properties')}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {!isLoading && !isError && properties.length === 0 ? (
+          <Card className="mt-8">
+            <CardContent className="flex flex-col items-center py-16 text-center">
+              <Building2 className="mb-4 h-12 w-12 text-muted-foreground" />
+              <h2 className="text-lg font-semibold">No properties yet</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground">
+                List your first property on BrokerFree. Verified owners can create listings that
+                reach tenants directly.
+              </p>
+              <Button asChild className="mt-6 brand-gradient text-primary-foreground hover:opacity-90">
+                <Link to="/owner/properties/new">Add your first property</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {!isLoading && !isError && properties.length > 0 ? (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {properties.map((property) => (
+              <div key={property._id} className="space-y-2">
+                <PropertyCard property={property} showStatus />
+                {property.status === 'inactive' && property.rejectionReason ? (
+                  <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+                    <span className="font-medium">Rejection reason:</span>{' '}
+                    {property.rejectionReason}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </main>
+    </div>
+  );
+}

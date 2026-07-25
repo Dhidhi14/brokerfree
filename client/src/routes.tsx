@@ -2,20 +2,27 @@ import { Route, Routes } from 'react-router-dom';
 import { GuestRoute } from '@/components/common/guest-route';
 import { ProtectedRoute } from '@/components/common/protected-route';
 import { AdminDashboardPage } from '@/pages/admin/dashboard';
+import { AdminPropertyVerificationsPage } from '@/pages/admin/property-verifications';
 import { AdminVerificationsPage } from '@/pages/admin/verifications';
 import { HomePage } from '@/pages/home';
 import { LoginPage } from '@/pages/auth/login';
 import { RegisterPage } from '@/pages/auth/register';
 import { VerifyOtpPage } from '@/pages/auth/verify-otp';
 import { NotFoundPage } from '@/pages/not-found';
+import { MyPropertiesPage } from '@/pages/owner/properties/index';
+import { NewPropertyPage } from '@/pages/owner/properties/new';
 import { OwnerDashboardPage } from '@/pages/owner/dashboard';
 import { OwnerKycPage } from '@/pages/owner/kyc';
+import { PropertyDetailPage } from '@/pages/properties/detail';
+import { PropertySearchPage } from '@/pages/properties/search';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/properties" element={<PropertySearchPage />} />
+      <Route path="/properties/:id" element={<PropertyDetailPage />} />
       <Route
         path="/login"
         element={
@@ -52,6 +59,22 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/owner/properties"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <MyPropertiesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/properties/new"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <NewPropertyPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin"
         element={
           <ProtectedRoute allowedRoles={['admin']}>
@@ -64,6 +87,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminVerificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/property-verifications"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminPropertyVerificationsPage />
           </ProtectedRoute>
         }
       />

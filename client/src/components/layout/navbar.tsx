@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   BadgeCheck,
+  Building2,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -58,6 +59,9 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-3 md:flex">
+          <Button variant="ghost" asChild>
+            <Link to="/properties">Browse Properties</Link>
+          </Button>
           {isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -80,16 +84,28 @@ export function Navbar() {
                   Dashboard
                 </DropdownMenuItem>
                 {user.role === 'admin' ? (
-                  <DropdownMenuItem onClick={() => navigate('/admin')}>
-                    <Shield className="mr-2 h-4 w-4" />
-                    Admin
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/admin/property-verifications')}>
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Property Verifications
+                    </DropdownMenuItem>
+                  </>
                 ) : null}
                 {user.role === 'owner' ? (
-                  <DropdownMenuItem onClick={() => navigate('/owner/kyc')}>
-                    <BadgeCheck className="mr-2 h-4 w-4" />
-                    Verification
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem onClick={() => navigate('/owner/kyc')}>
+                      <BadgeCheck className="mr-2 h-4 w-4" />
+                      Verification
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/owner/properties')}>
+                      <Building2 className="mr-2 h-4 w-4" />
+                      My Properties
+                    </DropdownMenuItem>
+                  </>
                 ) : null}
                 <DropdownMenuItem
                   onClick={() => toast.info('Profile settings coming soon')}
@@ -133,6 +149,11 @@ export function Navbar() {
       {mobileOpen ? (
         <div className="border-t border-border px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-2">
+            <Button variant="ghost" asChild className="justify-start">
+              <Link to="/properties" onClick={() => setMobileOpen(false)}>
+                Browse Properties
+              </Link>
+            </Button>
             {isAuthenticated && user ? (
               <>
                 <p className="px-2 text-sm font-medium">{user.fullName}</p>
@@ -148,30 +169,56 @@ export function Navbar() {
                   Dashboard
                 </Button>
                 {user.role === 'admin' ? (
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => {
-                      navigate('/admin');
-                      setMobileOpen(false);
-                    }}
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    Admin
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/admin');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/admin/property-verifications');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Property Verifications
+                    </Button>
+                  </>
                 ) : null}
                 {user.role === 'owner' ? (
-                  <Button
-                    variant="ghost"
-                    className="justify-start"
-                    onClick={() => {
-                      navigate('/owner/kyc');
-                      setMobileOpen(false);
-                    }}
-                  >
-                    <BadgeCheck className="mr-2 h-4 w-4" />
-                    Verification
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/owner/kyc');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <BadgeCheck className="mr-2 h-4 w-4" />
+                      Verification
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="justify-start"
+                      onClick={() => {
+                        navigate('/owner/properties');
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <Building2 className="mr-2 h-4 w-4" />
+                      My Properties
+                    </Button>
+                  </>
                 ) : null}
                 <Button
                   variant="ghost"
