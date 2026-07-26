@@ -159,9 +159,7 @@ export function Navbar() {
                     </DropdownMenuItem>
                   </>
                 ) : null}
-                <DropdownMenuItem
-                  onClick={() => toast.info('Profile settings coming soon')}
-                >
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
@@ -354,7 +352,7 @@ export function Navbar() {
                   variant="ghost"
                   className="justify-start"
                   onClick={() => {
-                    toast.info('Profile settings coming soon');
+                    navigate('/profile');
                     setMobileOpen(false);
                   }}
                 >

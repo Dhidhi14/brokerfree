@@ -64,3 +64,19 @@ export function updateRole(
 ): Promise<ApiResponse<AuthSessionData>> {
   return apiPatch<AuthSessionData>('/auth/role', { role });
 }
+
+export function updateProfile(
+  fullName: string
+): Promise<ApiResponse<{ user: User }>> {
+  return apiPatch<{ user: User }>('/auth/profile', { fullName });
+}
+
+export function changePassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<ApiResponse<MessageData>> {
+  return apiPatch<MessageData>('/auth/password', {
+    currentPassword,
+    newPassword,
+  });
+}

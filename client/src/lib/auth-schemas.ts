@@ -33,5 +33,22 @@ export const otpSchema = z.object({
   otp: z.string().regex(/^\d{6}$/, 'OTP must be exactly 6 digits'),
 });
 
+export const updateProfileSchema = z.object({
+  fullName: z.string().min(1, 'Full name is required').trim(),
+});
+
+export const changePasswordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1, 'Please confirm your new password'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
 export type RegisterAccountValues = z.infer<typeof registerAccountSchema>;
 export type LoginValues = z.infer<typeof loginSchema>;
+export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
+export type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;

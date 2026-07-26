@@ -469,3 +469,22 @@ profile/property, rating stars)
 
 ### Next: Day 18 continued - Admin dashboard frontend, profile
 settings page
+
+## Day 18 - [26-07-2026] Admin Panel & Platform Hardening (Frontend)
+
+### Built (Frontend)
+- ✅ Admin dashboard: platform overview stat cards (users, live
+  properties, pending KYC, applications, escrow held, executed
+  agreements, average rating) with real live data
+- ✅ Quick Actions section (Owner/Property Verifications, Escrow
+  Management)
+- ✅ Profile Settings page: read-only account info, name update,
+  password change with Sonner toasts
+- ✅ Navbar Profile link wired to working page
+
+### Tested (Full Browser Flow)
+- ✅ Admin dashboard displays correct live stats matching backend data
+- ✅ Profile name update and password change both work end-to-end
+  through the actual UI
+
+### Next: Day 19 - Testing pass and final polish
