@@ -9,11 +9,13 @@ import {
   Loader2,
   PartyPopper,
   PenLine,
+  Star,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AgreementStatusBadge } from '@/components/agreement/agreement-status-badge';
 import { AgreementEscrowSection } from '@/components/escrow/agreement-escrow-section';
 import { Navbar } from '@/components/layout/navbar';
+import { ReviewFormDialog } from '@/components/review/review-form-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -26,6 +28,7 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { useAgreementQuery, useSignAgreementMutation } from '@/hooks/use-agreements';
+import { useReviewStatusQuery } from '@/hooks/use-reviews';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { formatDate, formatDateTime } from '@/lib/format-date';
 import { formatCurrency } from '@/lib/utils';
@@ -96,6 +99,7 @@ function AgreementDetailContent({
   userId,
   onRequestSign,
 }: AgreementDetailContentProps) {
+  const [reviewOpen, setReviewOpen] = useState(false);
   const property = getPropertySummary(agreement.property);
   const tenant = getPartySummary(agreement.tenant);
   const owner = getPartySummary(agreement.owner);
@@ -113,6 +117,16 @@ function AgreementDetailContent({
     (isTenantViewer || isOwnerViewer) &&
     !hasViewerSigned &&
     agreement.status !== 'executed';
+
+  const otherParty = isTenantViewer ? owner : isOwnerViewer ? tenant : null;
+  const otherPartyName = otherParty?.fullName ?? (isTenantViewer ? 'Owner' : 'Tenant');
+  const canReview =
+    agreement.status === 'executed' && (isTenantViewer || isOwnerViewer);
+
+  const { data: reviewStatus, isLoading: isReviewStatusLoading } = useReviewStatusQuery(
+    agreement._id,
+    canReview
+  );
 
   return (
     <div className="space-y-6">
@@ -183,6 +197,49 @@ function AgreementDetailContent({
             </Button>
           </CardContent>
         </Card>
+      ) : null}
+
+      {canReview ? (
+        <Card className="border-amber-200/70 bg-gradient-to-b from-amber-50/70 via-background to-orange-50/30 shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white shadow-sm">
+                <Star className="h-5 w-5 fill-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Rate your experience</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Bi-directional feedback helps keep BrokerFree fair for everyone.
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {isReviewStatusLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" aria-label="Loading" />
+            ) : reviewStatus?.hasReviewed ? (
+              <p className="text-sm text-muted-foreground">You&apos;ve reviewed this rental</p>
+            ) : (
+              <Button
+                type="button"
+                className="w-full brand-gradient text-primary-foreground hover:opacity-90 sm:w-auto"
+                onClick={() => setReviewOpen(true)}
+              >
+                <Star className="mr-2 h-4 w-4" />
+                Rate {otherPartyName}
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {canReview ? (
+        <ReviewFormDialog
+          open={reviewOpen}
+          onOpenChange={setReviewOpen}
+          agreementId={agreement._id}
+          revieweeName={otherPartyName}
+        />
       ) : null}
 
       <Card>

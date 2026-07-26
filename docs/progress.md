@@ -432,3 +432,22 @@
 
 ### Next: Day 17 continued - Reviews frontend (submit form, display on
 profile/property, rating stars)
+
+## Day 17 - [26-07-2026] Reviews & Ratings Frontend
+
+### Built (Frontend)
+- ✅ Review API module, types, TanStack Query hooks
+- ✅ Interactive star rating input (indigo-violet) + amber display
+  rating with half-star support
+- ✅ Review form dialog ("Rate {name}")
+- ✅ Review list component
+- ✅ Wired into executed agreement detail (rate/already-reviewed state)
+- ✅ Wired into property detail owner card (star rating + count +
+  expandable review list)
+
+### Tested (Browser)
+- ✅ Owner's 5-star rating and tenant's review comment display
+  correctly on property detail page, alongside AI-Verified badge and
+  video verification match score
+
+### Next: Day 18 - Admin Panel polish

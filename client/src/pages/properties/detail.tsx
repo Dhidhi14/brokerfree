@@ -4,13 +4,14 @@ import {
   ArrowLeft,
   Bath,
   Building2,
+  ChevronDown,
+  ChevronUp,
   Clapperboard,
   Loader2,
   MapPin,
   Maximize2,
   MessageSquare,
   ShieldCheck,
-  Star,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ApplyDialog } from '@/components/application/apply-dialog';
@@ -18,6 +19,8 @@ import { Navbar } from '@/components/layout/navbar';
 import { AiVerifiedBadge } from '@/components/property/ai-verified-badge';
 import { PropertyStatusBadge } from '@/components/property/property-status-badge';
 import { VideoVerificationStatus } from '@/components/property/video-verification-status';
+import { ReviewList } from '@/components/review/review-list';
+import { StarRating } from '@/components/review/star-rating';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,6 +60,7 @@ export function PropertyDetailPage() {
   const { data: property, isLoading, isError, error } = usePropertyQuery(id);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [applyOpen, setApplyOpen] = useState(false);
+  const [showOwnerReviews, setShowOwnerReviews] = useState(false);
   const startChatMutation = useGetOrCreateConversationMutation();
 
   const isTenant = user?.role === 'tenant';
@@ -369,20 +373,47 @@ export function PropertyDetailPage() {
                     <CardHeader>
                       <CardTitle className="text-base">Listed by</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {ownerSummary.fullName.slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{ownerSummary.fullName}</p>
-                        <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                          {ownerSummary.rating.average.toFixed(1)} ({ownerSummary.rating.count}{' '}
-                          reviews)
-                        </p>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {ownerSummary.fullName.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <p className="font-medium">{ownerSummary.fullName}</p>
+                          <div className="mt-1 flex flex-wrap items-center gap-2">
+                            <StarRating value={ownerSummary.rating.average} size="sm" />
+                            <span className="text-sm text-muted-foreground">
+                              {ownerSummary.rating.average.toFixed(1)} (
+                              {ownerSummary.rating.count}{' '}
+                              {ownerSummary.rating.count === 1 ? 'review' : 'reviews'})
+                            </span>
+                          </div>
+                        </div>
                       </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto px-0 text-primary hover:bg-transparent hover:text-primary/80"
+                        onClick={() => setShowOwnerReviews((prev) => !prev)}
+                      >
+                        {showOwnerReviews ? (
+                          <>
+                            Hide reviews
+                            <ChevronUp className="ml-1 h-4 w-4" />
+                          </>
+                        ) : (
+                          <>
+                            View reviews
+                            <ChevronDown className="ml-1 h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
+                      {showOwnerReviews ? (
+                        <ReviewList userId={ownerSummary._id} />
+                      ) : null}
                     </CardContent>
                   </Card>
                 ) : null}
