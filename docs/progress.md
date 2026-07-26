@@ -451,3 +451,21 @@ profile/property, rating stars)
   video verification match score
 
 ### Next: Day 18 - Admin Panel polish
+
+## Day 18 - [26-07-2026] Admin Panel & Platform Hardening (Backend)
+
+### Built (Backend)
+- ✅ Auth rate limiting (10/15min) on login and register endpoints
+- ✅ Admin stats aggregation endpoint - users, properties, KYC,
+  applications, escrow, agreements, reviews overview
+- ✅ Profile update endpoint (fullName)
+- ✅ Change password endpoint (verifies current, rehashes via model hook)
+
+### Tested (Full Verification via Postman)
+- ✅ Admin stats returned correct, cross-checked numbers (3 users,
+  2 live properties, 1 executed agreement, 4.5 avg rating)
+- ✅ Profile update changed fullName correctly
+- ✅ Password change succeeded and rehashed properly
+
+### Next: Day 18 continued - Admin dashboard frontend, profile
+settings page

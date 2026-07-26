@@ -121,3 +121,21 @@ export async function updateRole(req: Request, res: Response): Promise<void> {
     },
   });
 }
+
+export async function updateProfile(req: Request, res: Response): Promise<void> {
+  const user = await authService.updateProfile(req.user!.id, req.body);
+
+  res.status(200).json({
+    success: true,
+    data: { user },
+  });
+}
+
+export async function changePassword(req: Request, res: Response): Promise<void> {
+  await authService.changePassword(req.user!.id, req.body);
+
+  res.status(200).json({
+    success: true,
+    data: { message: 'Password updated successfully' },
+  });
+}

@@ -43,3 +43,16 @@ export const updateRoleSchema = z.object({
 });
 
 export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;
+
+export const updateProfileSchema = z.object({
+  fullName: z.string().min(1, 'Full name is required').trim(),
+});
+
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: passwordSchema,
+});
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

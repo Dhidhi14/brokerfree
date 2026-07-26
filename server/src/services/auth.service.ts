@@ -3,9 +3,11 @@ import * as otpService from '@/services/otp.service';
 import { AppError } from '@/utils/app-error';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '@/utils/jwt';
 import type {
+  ChangePasswordInput,
   LoginInput,
   RegisterInput,
   SendOtpInput,
+  UpdateProfileInput,
   UpdateRoleInput,
   VerifyOtpInput,
 } from '@/validators/auth.validator';
@@ -159,4 +161,41 @@ export async function updateRole(
 
   const tokens = issueTokens(user);
   return { user, ...tokens };
+}
+
+export async function updateProfile(
+  userId: string,
+  data: UpdateProfileInput
+): Promise<UserDocument> {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  user.fullName = data.fullName;
+  await user.save();
+
+  return user;
+}
+
+export async function changePassword(
+  userId: string,
+  data: ChangePasswordInput
+): Promise<void> {
+  const user = await User.findById(userId).select('+passwordHash');
+
+  if (!user) {
+    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+  }
+
+  const isValid = await user.comparePassword(data.currentPassword);
+
+  if (!isValid) {
+    throw new AppError('Current password is incorrect', 401, 'INVALID_CREDENTIALS');
+  }
+
+  // Set virtual password field so pre-validate hook rehashes via save()
+  user.password = data.newPassword;
+  await user.save();
 }
