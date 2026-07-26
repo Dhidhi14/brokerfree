@@ -6,6 +6,12 @@ import {
   KYC_MAX_FILE_SIZE_BYTES,
 } from '@/constants/kyc.constants';
 import {
+  PHOTO_LOCK_ALLOWED_EXTENSIONS,
+  PHOTO_LOCK_ALLOWED_MIME_TYPES,
+  PHOTO_LOCK_MAX_FILE_SIZE_BYTES,
+  PHOTO_LOCK_MAX_PHOTOS,
+} from '@/constants/photo-lock.constants';
+import {
   PROPERTY_ALLOWED_EXTENSIONS,
   PROPERTY_ALLOWED_MIME_TYPES,
   PROPERTY_MAX_FILE_SIZE_BYTES,
@@ -206,5 +212,77 @@ export const uploadPropertyVideo = propertyVideoUpload.single('video');
 export function handleVideoUpload(req: Request, res: Response, next: NextFunction): void {
   uploadPropertyVideo(req, res, (err: unknown) => {
     handleMulterError(err, next, '50MB');
+  });
+}
+
+const normalizedPhotoLockMimes = PHOTO_LOCK_ALLOWED_MIME_TYPES.map((mime) =>
+  mime.toLowerCase()
+);
+
+function isAllowedPhotoLockFile(file: Express.Multer.File): boolean {
+  const normalizedMime = normalizeMime(file.mimetype);
+  const ext = getExtension(file.originalname);
+  return (
+    (normalizedMime !== '' && normalizedPhotoLockMimes.includes(normalizedMime)) ||
+    (ext !== '' && (PHOTO_LOCK_ALLOWED_EXTENSIONS as readonly string[]).includes(ext))
+  );
+}
+
+function photoLockFileFilter(
+  _req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+): void {
+  if (isAllowedPhotoLockFile(file)) {
+    cb(null, true);
+    return;
+  }
+
+  cb(
+    new AppError(
+      'Invalid file type. Allowed: JPG, JPEG, PNG, or WEBP',
+      400,
+      'INVALID_FILE_TYPE'
+    )
+  );
+}
+
+const photoLockUpload = multer({
+  storage: memoryStorage,
+  limits: { fileSize: PHOTO_LOCK_MAX_FILE_SIZE_BYTES, files: PHOTO_LOCK_MAX_PHOTOS },
+  fileFilter: photoLockFileFilter,
+});
+
+export const uploadPhotoLockPhotos = photoLockUpload.array('photos', PHOTO_LOCK_MAX_PHOTOS);
+
+export function handlePhotoLockUpload(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  uploadPhotoLockPhotos(req, res, (err: unknown) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        next(new AppError('File too large. Maximum size is 5MB', 400, 'FILE_TOO_LARGE'));
+        return;
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        next(new AppError('Unexpected file field', 400, 'INVALID_FILE_FIELD'));
+        return;
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        next(
+          new AppError(
+            `Too many files. Maximum is ${PHOTO_LOCK_MAX_PHOTOS}`,
+            400,
+            'TOO_MANY_FILES'
+          )
+        );
+        return;
+      }
+      next(new AppError(err.message, 400, 'UPLOAD_ERROR'));
+      return;
+    }
+    next(err);
   });
 }

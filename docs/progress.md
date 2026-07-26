@@ -377,3 +377,22 @@
   refunds, a known sandbox constraint, not an application bug
 
 ### Next: Day 15-16 - Photo Lock (move-in/move-out photo verification)
+
+## Day 15-16 - [26-07-2026] Photo Lock (Backend)
+
+### Built (Backend)
+- ✅ PhotoLock model — move-in and move-out photo sets, one per agreement
+- ✅ Mock photo comparison service (swappable interface, same pattern
+  as KYC/video verification) — deterministic "kitchen" trap area for
+  demoable flagged findings
+- ✅ Move-in must be submitted before move-out is allowed
+- ✅ Auto-triggered comparison on move-out submission
+- ✅ REST endpoints at /api/photo-lock
+
+### Tested (Full Flow via Postman)
+- ✅ Move-in photos submitted (living-room, kitchen) → real Cloudinary URLs
+- ✅ Move-out photos submitted → comparison auto-ran
+- ✅ Kitchen correctly flagged as "minor" change, living-room clean
+- ✅ overallCondition: "fair"
+
+### Next: Day 15-16 continued - Photo Lock frontend

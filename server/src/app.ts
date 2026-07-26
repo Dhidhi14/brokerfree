@@ -13,6 +13,7 @@ import { authRoutes } from '@/routes/auth.routes';
 import { chatRoutes } from '@/routes/chat.routes';
 import { escrowRoutes } from '@/routes/escrow.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
+import { photoLockRoutes } from '@/routes/photo-lock.routes';
 import { propertyRoutes } from '@/routes/property.routes';
 
 export function createApp(): express.Application {
@@ -56,6 +57,7 @@ export function createApp(): express.Application {
   app.use('/api/chat', chatRoutes);
   app.use('/api/agreements', agreementRoutes);
   app.use('/api/escrow', escrowRoutes);
+  app.use('/api/photo-lock', photoLockRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
