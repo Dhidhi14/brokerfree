@@ -416,3 +416,19 @@
   living room clean, AI-generated disclaimer shown
 
 ### Next: Day 17 - Reviews & Ratings
+
+## Day 17 - [26-07-2026] Reviews & Ratings (Backend)
+
+### Built (Backend)
+- ✅ Review model (rating 1-5, comment, unique per agreement+reviewer)
+- ✅ Review service: create with automatic User.rating recalculation
+  (average + count), get reviews for a user, review status check
+- ✅ REST endpoints at /api/reviews
+
+### Tested (Bi-Directional, Full Flow)
+- ✅ Tenant reviews owner (5 stars) → owner's rating aggregates correctly
+- ✅ Owner reviews tenant (4 stars) → tenant's rating aggregates correctly
+- ✅ Duplicate review attempt correctly blocked with 409 ALREADY_REVIEWED
+
+### Next: Day 17 continued - Reviews frontend (submit form, display on
+profile/property, rating stars)

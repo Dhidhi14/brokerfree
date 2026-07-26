@@ -15,6 +15,7 @@ import { escrowRoutes } from '@/routes/escrow.routes';
 import { kycRoutes } from '@/routes/kyc.routes';
 import { photoLockRoutes } from '@/routes/photo-lock.routes';
 import { propertyRoutes } from '@/routes/property.routes';
+import { reviewRoutes } from '@/routes/review.routes';
 
 export function createApp(): express.Application {
   const app = express();
@@ -58,6 +59,7 @@ export function createApp(): express.Application {
   app.use('/api/agreements', agreementRoutes);
   app.use('/api/escrow', escrowRoutes);
   app.use('/api/photo-lock', photoLockRoutes);
+  app.use('/api/reviews', reviewRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
