@@ -1,12 +1,25 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, Clapperboard, Loader2, Plus, ShieldCheck } from 'lucide-react';
+import { Building2, Clapperboard, Loader2, Pencil, Plus, ShieldCheck, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Navbar } from '@/components/layout/navbar';
 import { PropertyCard } from '@/components/property/property-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useMyPropertiesQuery } from '@/hooks/use-properties';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  useDeletePropertyMutation,
+  useMyPropertiesQuery,
+} from '@/hooks/use-properties';
 import { getApiErrorMessage } from '@/lib/api-error';
-import type { VideoVerificationStatus } from '@/types/property.types';
+import type { Property, VideoVerificationStatus } from '@/types/property.types';
 
 function videoTourCta(status: VideoVerificationStatus | undefined): {
   label: string;
@@ -26,6 +39,22 @@ function videoTourCta(status: VideoVerificationStatus | undefined): {
 
 export function MyPropertiesPage() {
   const { data: properties = [], isLoading, isError, error } = useMyPropertiesQuery();
+  const deleteMutation = useDeletePropertyMutation();
+  const [propertyToDelete, setPropertyToDelete] = useState<Property | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (!propertyToDelete) return;
+
+    deleteMutation.mutate(propertyToDelete._id, {
+      onSuccess: () => {
+        toast.success('Property deleted');
+        setPropertyToDelete(null);
+      },
+      onError: (err) => {
+        toast.error(getApiErrorMessage(err, 'Failed to delete property'));
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,6 +117,30 @@ export function MyPropertiesPage() {
               return (
                 <div key={property._id} className="space-y-2">
                   <PropertyCard property={property} showStatus />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link
+                        to={`/owner/properties/${property._id}/edit`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </Link>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPropertyToDelete(property);
+                      }}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
                   <Button asChild variant="outline" className="w-full" size="sm">
                     <Link
                       to={`/owner/properties/${property._id}/video-tour`}
@@ -119,6 +172,55 @@ export function MyPropertiesPage() {
           </div>
         ) : null}
       </main>
+
+      <Dialog
+        open={propertyToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteMutation.isPending) {
+            setPropertyToDelete(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete property?</DialogTitle>
+            <DialogDescription>
+              This permanently removes{' '}
+              <span className="font-medium text-foreground">
+                {propertyToDelete?.title ?? 'this listing'}
+              </span>
+              . This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={deleteMutation.isPending}
+              onClick={() => setPropertyToDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteMutation.isPending}
+              onClick={handleConfirmDelete}
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting…
+                </>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+export default MyPropertiesPage;

@@ -1,0 +1,13 @@
+process.env.NODE_ENV = 'test';
+process.env.PORT = '5001';
+process.env.MONGO_URI = 'mongodb://127.0.0.1:27017/brokerfree-test';
+process.env.JWT_SECRET = 'test-jwt-secret-at-least-32-chars-long';
+process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-at-least-32-chars';
+process.env.JWT_ACCESS_EXPIRES = '15m';
+process.env.JWT_REFRESH_EXPIRES = '7d';
+process.env.CLIENT_URL = 'http://localhost:5173';
+process.env.CLOUDINARY_CLOUD_NAME = 'test-cloud';
+process.env.CLOUDINARY_API_KEY = 'test-key';
+process.env.CLOUDINARY_API_SECRET = 'test-secret';
+process.env.RAZORPAY_KEY_ID = 'rzp_test_key_id';
+process.env.RAZORPAY_KEY_SECRET = 'test_razorpay_key_secret';

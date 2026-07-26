@@ -98,6 +98,55 @@ export function useCreatePropertyMutation() {
   });
 }
 
+export function useUpdatePropertyMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Record<string, unknown>;
+    }) => {
+      const response = await propertyApi.updateProperty(id, data);
+
+      if (!response.success || !response.data) {
+        throw new Error(getApiResponseError(response, 'Failed to update property'));
+      }
+
+      return response.data.property;
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.detail(variables.id) });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
+    },
+  });
+}
+
+export function useDeletePropertyMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await propertyApi.deleteProperty(id);
+
+      if (!response.success) {
+        throw new Error(getApiResponseError(response, 'Failed to delete property'));
+      }
+
+      return id;
+    },
+    onSuccess: (id) => {
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.detail(id) });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.pending() });
+    },
+  });
+}
+
 export function useReviewPropertyMutation() {
   const queryClient = useQueryClient();
 

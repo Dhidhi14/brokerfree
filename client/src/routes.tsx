@@ -13,6 +13,7 @@ import { NotFoundPage } from '@/pages/not-found';
 import { OwnerApplicationsPage } from '@/pages/owner/applications';
 import { MyPropertiesPage } from '@/pages/owner/properties/index';
 import { NewPropertyPage } from '@/pages/owner/properties/new';
+import { EditPropertyPage } from '@/pages/owner/properties/edit';
 import { OwnerVideoTourPage } from '@/pages/owner/properties/video-tour';
 import { OwnerDashboardPage } from '@/pages/owner/dashboard';
 import { OwnerKycPage } from '@/pages/owner/kyc';
@@ -146,6 +147,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['owner']}>
             <NewPropertyPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/owner/properties/:id/edit"
+        element={
+          <ProtectedRoute allowedRoles={['owner']}>
+            <EditPropertyPage />
           </ProtectedRoute>
         }
       />

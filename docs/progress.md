@@ -488,3 +488,24 @@ settings page
   through the actual UI
 
 ### Next: Day 19 - Testing pass and final polish
+
+## Day 19 - [26-07-2026] Automated Testing & Final Polish
+
+### Built (Backend Tests)
+- ✅ Jest + ts-jest + mongodb-memory-server setup (in-memory MongoDB,
+  no mocks)
+- ✅ auth.test.ts - hashing, login success/fail, JWT payload, duplicate
+  email
+- ✅ escrow.test.ts - valid/invalid HMAC signature verification,
+  non-tenant order rejection
+- ✅ property.test.ts - KYC gate enforcement, ownership checks
+- ✅ application.test.ts - partial unique index (duplicate blocked,
+  re-apply after reject allowed)
+- ✅ 13/13 tests passing across 4 suites
+
+### Built (Frontend Polish)
+- ✅ Property edit/delete UI on My Properties page
+- ✅ Vite manual chunk splitting - main bundle reduced from 845KB to
+  243KB, resolving the build warning
+
+### Next: Day 20 - Deployment, README, demo video
