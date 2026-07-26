@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
+  Camera,
   CheckCircle2,
   Clock,
   ExternalLink,
@@ -156,6 +157,32 @@ function AgreementDetailContent({
           isTenant={isTenantViewer}
           isOwner={isOwnerViewer}
         />
+      ) : null}
+
+      {agreement.status === 'executed' ? (
+        <Card className="border-indigo-200/70 bg-gradient-to-b from-indigo-50/80 via-background to-violet-50/40 shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white shadow-sm">
+                <Camera className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Move-In / Move-Out Documentation</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Lock property condition with timestamped photos for a fair deposit review.
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full brand-gradient text-primary-foreground hover:opacity-90 sm:w-auto">
+              <Link to={`/agreements/${agreement._id}/photo-lock`}>
+                <Camera className="mr-2 h-4 w-4" />
+                Open Photo Lock
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       ) : null}
 
       <Card>

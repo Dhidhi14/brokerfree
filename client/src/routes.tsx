@@ -22,6 +22,7 @@ import { ConversationsPage } from '@/pages/chat/conversations';
 import { ChatThreadPage } from '@/pages/chat/thread';
 import { AgreementDetailPage } from '@/pages/agreements/detail';
 import { MyAgreementsPage } from '@/pages/agreements/my-agreements';
+import { PhotoLockPage } from '@/pages/agreements/photo-lock';
 import { MyEscrowsPage } from '@/pages/escrow/my-escrows';
 import { TenantApplicationsPage } from '@/pages/tenant/applications';
 import { TenantDashboardPage } from '@/pages/tenant/dashboard';
@@ -61,6 +62,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['tenant', 'owner']}>
             <AgreementDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agreements/:agreementId/photo-lock"
+        element={
+          <ProtectedRoute allowedRoles={['tenant', 'owner']}>
+            <PhotoLockPage />
           </ProtectedRoute>
         }
       />

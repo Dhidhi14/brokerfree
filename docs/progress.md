@@ -396,3 +396,23 @@
 - ✅ overallCondition: "fair"
 
 ### Next: Day 15-16 continued - Photo Lock frontend
+
+## Day 15-16 - [26-07-2026] Photo Lock Frontend
+
+### Built (Frontend)
+- ✅ Photo Lock API module, types, TanStack Query hooks
+- ✅ Area photo uploader component (per-room drop zones)
+- ✅ Photo Lock page: status-driven UI (move-in submit → move-out
+  submit → comparison report)
+- ✅ Side-by-side move-in/move-out photo grids grouped by area
+- ✅ Condition comparison report (good/fair/disputed badge, per-area
+  findings with severity)
+- ✅ Entry point from executed agreement detail page
+- ✅ Owner sees read-only view; only tenant can submit
+
+### Tested (Full Flow, Browser)
+- ✅ Move-in and move-out photo grids display correctly
+- ✅ Comparison report renders: Fair badge, kitchen flagged minor,
+  living room clean, AI-generated disclaimer shown
+
+### Next: Day 17 - Reviews & Ratings
