@@ -509,3 +509,33 @@ settings page
   243KB, resolving the build warning
 
 ### Next: Day 20 - Deployment, README, demo video
+
+## Day 20 - [27-07-2026] Deployment
+
+### Deployed
+- ✅ Backend deployed to Render (Node web service, free tier)
+- ✅ Frontend deployed to Vercel (Vite build, free tier)
+- ✅ MongoDB Atlas configured for external access (0.0.0.0/0)
+- ✅ Environment variables configured on both platforms
+- ✅ CORS (CLIENT_URL) updated to point to live Vercel URL
+
+### Live URLs
+- Frontend: https://brokerfree-azure.vercel.app
+- Backend: https://brokerfree-t8qd.onrender.com
+
+### Bugs Fixed
+- Render build failed with dozens of "missing type declaration" errors
+  (@types/express, @types/pdfkit, etc.) even though they're listed in
+  package.json. Root cause: NODE_ENV=production causes npm install to
+  skip devDependencies by default, but TypeScript compilation needs
+  them. Fixed by changing build command to
+  "npm install --include=dev && npm run build"
+
+### Tested (Live, End-to-End)
+- ✅ Login works on the live deployed app
+- ✅ Properties, KYC, and all core data visible (same MongoDB Atlas
+  database as local development)
+
+### Project Status: COMPLETE
+All 20 days of the roadmap finished. BrokerFree is a fully functional,
+tested, and publicly deployed full-stack rental platform.
